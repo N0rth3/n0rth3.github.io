@@ -346,6 +346,36 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/03/13/SSRF基础/" >
+            
+                <span>SSRF基础</span>
+        </a>
+        <div class="abstract-content">
+            SSRFSSRF，Server-Side Request Forgery，服务端请求伪造，是一种由攻击者构造形成由服务器端发起请求的一个漏洞。一般情况下，SSRF 攻击的目标是从外网无法访问的内部系统。
+漏洞形成的原因大多是因为服务端提供了从其他服务器应用获取数据的功能且没有对目标地址作过滤和限制。
+攻击面攻击者可以利用 SSRF 实现的攻击主要有 5 种：
+
+可以对外网、服务器所在内网、本地进行端口扫描，获取一些服务的 banner 信息
+攻击运行在内网或本地的应用程序（比如溢出）
+对内网 WEB 应用进行指纹识别，通过访问默认文件实现
+攻击内外网的 web 应用，主要是使用 GET ...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/13</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/03/03/记一次实战/" >
             
                 <span>记一次实战</span>
@@ -635,35 +665,6 @@ bestphp’s revenge这是题目源码123456789101112&lt;?phphighlight_file(__FIL
             <!-- date  -->
             <div class="abstract-date">
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/19</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/14/phpphar协议对象注入/" >
-            
-                <span>phpphar协议对象注入</span>
-        </a>
-        <div class="abstract-content">
-            文章参考https://www.freebuf.com/company-information/187071.html
-phar文件会以序列化的形式存储用户自定义的meta-data这一特性，拓展了php反序列化漏洞的攻击面。
-该方法在文件系统函数（file_exists（）、is_dir（）等）参数可控的情况下，配合phar://伪协议，可以不依赖unserialize（）直接进行反序列化操作。
-phar文件构成
-a stub
-
-可以理解为一个标志，格式为xxx&lt;?php xxx;HALT_COMPILER();?&gt;，前期内容不限，但必须以HALT_COMPILER();?...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/14</span>
             </div>
             <!-- tags  -->
             
@@ -1226,9 +1227,28 @@ a stub
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 36
+        Total : 37
         </div>
         <!-- search  -->
         
@@ -1241,6 +1261,11 @@ a stub
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/13</span><a class="archive-post-title" href= "/2019/03/13/SSRF基础/" >SSRF基础</a>
+        </li>
     
     
         <li class="archive-post-item">

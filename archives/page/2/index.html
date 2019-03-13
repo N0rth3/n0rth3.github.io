@@ -346,6 +346,35 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2018/11/14/phpphar协议对象注入/" >
+            
+                <span>phpphar协议对象注入</span>
+        </a>
+        <div class="abstract-content">
+            文章参考https://www.freebuf.com/company-information/187071.html
+phar文件会以序列化的形式存储用户自定义的meta-data这一特性，拓展了php反序列化漏洞的攻击面。
+该方法在文件系统函数（file_exists（）、is_dir（）等）参数可控的情况下，配合phar://伪协议，可以不依赖unserialize（）直接进行反序列化操作。
+phar文件构成
+a stub
+
+可以理解为一个标志，格式为xxx&lt;?php xxx;HALT_COMPILER();?&gt;，前期内容不限，但必须以HALT_COMPILER();?...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/14</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/11/12/HCTF-WEB部分题解/" >
             
                 <span>HCTF WEB部分题解</span>
@@ -582,35 +611,6 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/15</span>
             </div>
             <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/15/护网杯Web-WP/" >
-            
-                <span>护网杯Web WP</span>
-        </a>
-        <div class="abstract-content">
-            <p>Web3看出来是个fastjson反序列化Rce了，可是太菜了不会做<br>不要眼高手低了，多动手，多写代码，多复现<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/15</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
             
         </div>
     </article>
@@ -1171,9 +1171,28 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 36
+        Total : 37
         </div>
         <!-- search  -->
         
@@ -1186,6 +1205,11 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">03/13</span><a class="archive-post-title" href= "/2019/03/13/SSRF基础/" >SSRF基础</a>
+        </li>
     
     
         <li class="archive-post-item">
