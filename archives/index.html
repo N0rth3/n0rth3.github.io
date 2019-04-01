@@ -346,6 +346,35 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/04/01/TCTF2019部分WP/" >
+            
+                <span>TCTF2019部分WP</span>
+        </a>
+        <div class="abstract-content">
+            TCTF / RSCTF 2019 WP
+Team Name : CNSS
+
+[toc]
+Web只有两道题，侥幸ak，pwn没有签到有点僵硬，放上全队的WP  
+WebGhost Pepper抓包可以发现一个base64的字符串，解码karaf/karaf登陆尝试访问karaf的控制台来执行命令，但是发现没有，那我们给他装一个1http://111.186.63.207:31337/jolokia/exec/org.apache.karaf:name=root,type=feature/installFeature(java.lang.String)/webconsole
+安装好以后可以...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/01</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/03/13/SSRF基础/" >
             
                 <span>SSRF基础</span>
@@ -641,30 +670,6 @@ __isset()在不可访问的...
             <!-- date  -->
             <div class="abstract-date">
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/22</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/19/从LCTF-WEB签到题看PHP反序列化/" >
-            
-                <span>从LCTF WEB签到题看PHP反序列化</span>
-        </a>
-        <div class="abstract-content">
-            LCTF的Web题，本菜鸡是感觉难到自闭了，只能来分析下签到题
-bestphp’s revenge这是题目源码123456789101112&lt;?phphighlight_file(__FILE__);$b = 'implode';call_user_func($_GET[f],$_POST);session_start();if(isset($_GET[name]))&#123;    $_SESSION[name] = $_GET[name];&#125;var_dump($_SESSION);$a = array(reset($_SESSION),'welcome_to_the...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/19</span>
             </div>
             <!-- tags  -->
             
@@ -1246,9 +1251,28 @@ bestphp’s revenge这是题目源码123456789101112&lt;?phphighlight_file(__FIL
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 37
+        Total : 38
         </div>
         <!-- search  -->
         
@@ -1261,6 +1285,11 @@ bestphp’s revenge这是题目源码123456789101112&lt;?phphighlight_file(__FIL
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/01</span><a class="archive-post-title" href= "/2019/04/01/TCTF2019部分WP/" >TCTF2019部分WP</a>
+        </li>
     
     
         <li class="archive-post-item">
