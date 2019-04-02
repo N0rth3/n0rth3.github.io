@@ -346,6 +346,46 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2018/11/22/PHP反序列化补充/" >
+            
+                <span>PHP反序列化补充</span>
+        </a>
+        <div class="abstract-content">
+            填坑嘛，想起来好久以前立的flag，要写写PHP反序列化相关这里就再补充一下上一篇没有涉及到的PHP反序列化常见姿势  
+PHP反序列化相关函数
+nstruct(), destruct()
+
+构造函数与析构函数
+
+call(), callStatic()
+
+方法重载的两个函数
+__call()是在对象上下文中调用不可访问的方法时触发
+__callStatic()是在静态上下文中调用不可访问的方法时触发。
+get(), set()
+__get()用于从不可访问的属性读取数据。
+__set()用于将数据写入不可访问的属性。
+
+isset(), unset()
+
+__isset()在不可访问的...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/22</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/11/19/从LCTF-WEB签到题看PHP反序列化/" >
             
                 <span>从LCTF WEB签到题看PHP反序列化</span>
@@ -586,30 +626,6 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
             <!-- date  -->
             <div class="abstract-date">
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/19</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/17/浅析SSTI/" >
-            
-                <span>浅析SSTI</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="SSTI"><a href="#SSTI" class="headerlink" title="SSTI"></a>SSTI</h2><p>Server-side Template Injection（简称SSTI）是服务端模板注入攻击，和常见的web注入一样，是服务端接收了用户的输入，将其作为 Web 应用模板内容的一部分，在进行目标编译渲染的过程中，执行了用户插入的恶意内容，因而可能导致了敏感信息泄露、代码执行、GetShell 等问题。其影响范围主要取决于模版引擎的复杂性。</p>
-<p>利用的难点也在于对使用的模板引擎的判断<br><img src="/img/8_2.jpg" alt="image"><br>本文主要讲Flask框架的jinja2模板<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/17</span>
             </div>
             <!-- tags  -->
             
@@ -1210,9 +1226,20 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 38
+        Total : 39
         </div>
         <!-- search  -->
         
@@ -1225,6 +1252,11 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/02</span><a class="archive-post-title" href= "/2019/04/02/PHP-disable-functions-Bypass-0x00/" >PHP disable_functions Bypass(0x00)</a>
+        </li>
     
     
         <li class="archive-post-item">
