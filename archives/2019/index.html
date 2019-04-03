@@ -346,6 +346,31 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/04/03/PHP-disable-functions-Bypass-0x01/" >
+            
+                <span>PHP disable_functions Bypass(0x01)</span>
+        </a>
+        <div class="abstract-content">
+            结合0ctf2019来讲一下 php disable_functions绕过  
+黑名单绕过直接绕过，黑名单就可能存在遗漏检查一些不常见的命令执行函数是否在disable_funnctions中具体可以看我上一篇文章提到的命令执行函数例如用pcntl_exec突破123&lt;?php	pcntl_exec ( "/bin/bash" , array("whoami"));?&gt;
+系统组件绕过这个方法适用于windows环境12345678&lt;?php$command=$_POST[a];$wsh = new COM(&apos;WScript.shell&apos;);   /...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/03</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/04/02/PHP-disable-functions-Bypass-0x00/" >
             
                 <span>PHP disable_functions Bypass(0x00)</span>
@@ -1170,9 +1195,26 @@ JSONP劫持又为“ JSON Hijacking ”，这里其实是属于CSRF的范畴。�
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 39
+        Total : 40
         </div>
         <!-- search  -->
         
@@ -1185,6 +1227,11 @@ JSONP劫持又为“ JSON Hijacking ”，这里其实是属于CSRF的范畴。�
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/03</span><a class="archive-post-title" href= "/2019/04/03/PHP-disable-functions-Bypass-0x01/" >PHP disable_functions Bypass(0x01)</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1412,13 +1459,13 @@ JSONP劫持又为“ JSON Hijacking ”，这里其实是属于CSRF的范畴。�
     
         <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
     
+        <span class="sidebar-tag-name" data-tags="Writeup SQL注入"><span class="iconfont-archer">&#xe606;</span>Writeup SQL注入</span>
+    
         <span class="sidebar-tag-name" data-tags="服务器"><span class="iconfont-archer">&#xe606;</span>服务器</span>
     
         <span class="sidebar-tag-name" data-tags="Pentest"><span class="iconfont-archer">&#xe606;</span>Pentest</span>
     
         <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
-    
-        <span class="sidebar-tag-name" data-tags="Writeup SQL注入"><span class="iconfont-archer">&#xe606;</span>Writeup SQL注入</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>
