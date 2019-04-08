@@ -346,6 +346,44 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/04/08/CTF中SSRF的一些Trick/" >
+            
+                <span>CTF中SSRF的一些Trick</span>
+        </a>
+        <div class="abstract-content">
+            SSRFSSRF，Server-Side Request Forgery，服务端请求伪造，是一种由攻击者构造形成由服务器端发起请求的一个漏洞。一般情况下，SSRF 攻击的目标是从外网无法访问的内部系统。
+常见攻击面  
+
+可以对外网、服务器所在内网、本地进行端口扫描，获取一些服务的 banner 信息
+攻击运行在内网或本地的应用程序（比如溢出）
+对内网 WEB 应用进行指纹识别，通过访问默认文件实现
+攻击内外网的 web 应用，主要是使用 GET 参数就可以实现的攻击（比如 Struts2，sqli 等）
+利用 file 协议读取本地文件等
+
+扩展攻击面主要讲同gopher协议一起运用的...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/08</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "SSRF">SSRF</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/04/03/PHP-disable-functions-Bypass-0x01/" >
             
                 <span>PHP disable_functions Bypass(0x01)</span>
@@ -622,40 +660,10 @@ JSONP劫持又为“ JSON Hijacking ”，这里其实是属于CSRF的范畴。�
         </div>
     </article>
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/29/BCTF-Web签到/" >
-            
-                <span>BCTF Web签到</span>
-        </a>
-        <div class="abstract-content">
-            大概就是这种水平了C是不可能C的，也就国际赛签签到勉强不爆零维持下生活这样子（然而这个题最后还没出这个题12解如果我早点看的话就做出来了，思路是对的，队友赛后一小时出了。。最近事情实在太多，国际赛题目一看更浮躁了  
-checkin其实这个题，体现了信息收集的重要性（当然，关注漏洞的dalao是能直接想到的属实是个签到题最后12解也确实说明了现在国内大家的水平确实过于拘泥在套路化的东西上遇到点新东西就不会了。。404页面直接显示了用的beego框架测了下逻辑都没有太大的问题一个上传点，一个文章发布然后有一个info页面info页面算是很明显的提示了问题出在了session但是任何人拿到这...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/29</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
     <!-- paginator  -->
     
     <nav class="page-nav">
-        <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><a class="extend next" rel="next" href="/archives/page/2/">NEXT &#62;</a>
+        <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="page-number" href="/archives/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/5/">5</a><a class="extend next" rel="next" href="/archives/page/2/">NEXT &#62;</a>
     </nav>
     
 </main>
@@ -1276,9 +1284,24 @@ checkin其实这个题，体现了信息收集的重要性（当然，关注漏�
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 40
+        Total : 41
         </div>
         <!-- search  -->
         
@@ -1291,6 +1314,11 @@ checkin其实这个题，体现了信息收集的重要性（当然，关注漏�
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">04/08</span><a class="archive-post-title" href= "/2019/04/08/CTF中SSRF的一些Trick/" >CTF中SSRF的一些Trick</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1473,12 +1501,12 @@ checkin其实这个题，体现了信息收集的重要性（当然，关注漏�
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
         </li>
     
     
@@ -1519,17 +1547,19 @@ checkin其实这个题，体现了信息收集的重要性（当然，关注漏�
     
         <span class="sidebar-tag-name" data-tags="Writeup"><span class="iconfont-archer">&#xe606;</span>Writeup</span>
     
+        <span class="sidebar-tag-name" data-tags="SSRF"><span class="iconfont-archer">&#xe606;</span>SSRF</span>
+    
         <span class="sidebar-tag-name" data-tags="前端安全"><span class="iconfont-archer">&#xe606;</span>前端安全</span>
     
         <span class="sidebar-tag-name" data-tags="Python"><span class="iconfont-archer">&#xe606;</span>Python</span>
-    
-        <span class="sidebar-tag-name" data-tags="Writeup SQL注入"><span class="iconfont-archer">&#xe606;</span>Writeup SQL注入</span>
     
         <span class="sidebar-tag-name" data-tags="服务器"><span class="iconfont-archer">&#xe606;</span>服务器</span>
     
         <span class="sidebar-tag-name" data-tags="Pentest"><span class="iconfont-archer">&#xe606;</span>Pentest</span>
     
         <span class="sidebar-tag-name" data-tags="渗透测试"><span class="iconfont-archer">&#xe606;</span>渗透测试</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup SQL注入"><span class="iconfont-archer">&#xe606;</span>Writeup SQL注入</span>
     
     </div>
     <div class="iconfont-archer sidebar-tags-empty">&#xe678;</div>

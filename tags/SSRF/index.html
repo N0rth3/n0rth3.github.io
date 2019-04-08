@@ -346,307 +346,39 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/29/BCTF-Web签到/" >
+        <a class="abstract-title" href = "/2019/04/08/CTF中SSRF的一些Trick/" >
             
-                <span>BCTF Web签到</span>
+                <span>CTF中SSRF的一些Trick</span>
         </a>
         <div class="abstract-content">
-            大概就是这种水平了C是不可能C的，也就国际赛签签到勉强不爆零维持下生活这样子（然而这个题最后还没出这个题12解如果我早点看的话就做出来了，思路是对的，队友赛后一小时出了。。最近事情实在太多，国际赛题目一看更浮躁了  
-checkin其实这个题，体现了信息收集的重要性（当然，关注漏洞的dalao是能直接想到的属实是个签到题最后12解也确实说明了现在国内大家的水平确实过于拘泥在套路化的东西上遇到点新东西就不会了。。404页面直接显示了用的beego框架测了下逻辑都没有太大的问题一个上传点，一个文章发布然后有一个info页面info页面算是很明显的提示了问题出在了session但是任何人拿到这...
+            SSRFSSRF，Server-Side Request Forgery，服务端请求伪造，是一种由攻击者构造形成由服务器端发起请求的一个漏洞。一般情况下，SSRF 攻击的目标是从外网无法访问的内部系统。
+常见攻击面  
+
+可以对外网、服务器所在内网、本地进行端口扫描，获取一些服务的 banner 信息
+攻击运行在内网或本地的应用程序（比如溢出）
+对内网 WEB 应用进行指纹识别，通过访问默认文件实现
+攻击内外网的 web 应用，主要是使用 GET 参数就可以实现的攻击（比如 Struts2，sqli 等）
+利用 file 协议读取本地文件等
+
+扩展攻击面主要讲同gopher协议一起运用的...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/29</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/04/08</span>
             </div>
             <!-- tags  -->
             
             <div class= abstract-tags >
     
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
+        <a class="post-tag" href="javascript:void(0);" data-tags = "SSRF">SSRF</a>
     
 </div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/26/Docker入门笔记/" >
-            
-                <span>Docker入门笔记</span>
-        </a>
-        <div class="abstract-content">
-            开始准备面试了很多坑要填，java，docker，php源码审计，内网渗透，计网…怎么这么多坑要填的先写写docker吧  
-Docker基础镜像（images）
-Docker 镜像是一个特殊的文件系统，除了提供容器运行时所需的程序、库、资源、配置等文件外，还包含了一些为运行时准备的一些配置参数（如匿名卷、环境变量、用户等）。镜像不包含任何动态数据，其内容在构建之后也不会被改变。常用命令  
-
-
-查看已有的docker镜像  dockers images
-
-
-
-从公网拉取一个镜像 docker pull iamge_name
-查找镜像列表 docker search nginx
-删除镜像...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/26</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/22/PHP反序列化补充/" >
-            
-                <span>PHP反序列化补充</span>
-        </a>
-        <div class="abstract-content">
-            填坑嘛，想起来好久以前立的flag，要写写PHP反序列化相关这里就再补充一下上一篇没有涉及到的PHP反序列化常见姿势  
-PHP反序列化相关函数
-nstruct(), destruct()
-
-构造函数与析构函数
-
-call(), callStatic()
-
-方法重载的两个函数
-__call()是在对象上下文中调用不可访问的方法时触发
-__callStatic()是在静态上下文中调用不可访问的方法时触发。
-get(), set()
-__get()用于从不可访问的属性读取数据。
-__set()用于将数据写入不可访问的属性。
-
-isset(), unset()
-
-__isset()在不可访问的...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/22</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/19/从LCTF-WEB签到题看PHP反序列化/" >
-            
-                <span>从LCTF WEB签到题看PHP反序列化</span>
-        </a>
-        <div class="abstract-content">
-            LCTF的Web题，本菜鸡是感觉难到自闭了，只能来分析下签到题
-bestphp’s revenge这是题目源码123456789101112&lt;?phphighlight_file(__FILE__);$b = 'implode';call_user_func($_GET[f],$_POST);session_start();if(isset($_GET[name]))&#123;    $_SESSION[name] = $_GET[name];&#125;var_dump($_SESSION);$a = array(reset($_SESSION),'welcome_to_the...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/19</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/14/phpphar协议对象注入/" >
-            
-                <span>phpphar协议对象注入</span>
-        </a>
-        <div class="abstract-content">
-            文章参考https://www.freebuf.com/company-information/187071.html
-phar文件会以序列化的形式存储用户自定义的meta-data这一特性，拓展了php反序列化漏洞的攻击面。
-该方法在文件系统函数（file_exists（）、is_dir（）等）参数可控的情况下，配合phar://伪协议，可以不依赖unserialize（）直接进行反序列化操作。
-phar文件构成
-a stub
-
-可以理解为一个标志，格式为xxx&lt;?php xxx;HALT_COMPILER();?&gt;，前期内容不限，但必须以HALT_COMPILER();?...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/14</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/12/HCTF-WEB部分题解/" >
-            
-                <span>HCTF WEB部分题解</span>
-        </a>
-        <div class="abstract-content">
-            hide and seek这个题上来看到cookie感觉有点像jwt，然后又要admin登陆再加上文件上传的点提示有个secret，大概猜到是要读一个key伪造cookie登陆zip后台是解析了的，所以一开始跑偏了，想到Zip Slip目录遍历漏洞这里我没法判断是个什么语言的站(tcl后来老大告知可以用软链接12ln -s /ect/passwd testzip -y test.zip test
-先知上有篇文章 https://xz.aliyun.com/t/2589测试了一下确实可以读到东西然后又不知道读什么，就卡住了  
-然后看一下配置文件1234567891011121314151...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/12</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/12/上海大学生信息安全竞赛Web题解/" >
-            
-                <span>上海大学生信息安全竞赛Web题解</span>
-        </a>
-        <div class="abstract-content">
-            what are you doing改http头，被绕127坑了好久，索性找了个大礼包12345678910111213X-Forwarded-For:127.0.0.1REMOTE_ADDR:127.0.0.1CLIENT_IP:127.0.0.1X-Real-IP:127.0.0.1Proxy-Client-IP:127.0.0.1client-ip: 127.0.0.1x-remote-IP: 127.0.0.1x-originating-IP: 127.0.0.1x-remote-ip: 127.0.0.1x-client-ip: 127.0.0.1x-client-IP: 12...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/12</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/09/SECCON-Web/" >
-            
-                <span>SECCON Web</span>
-        </a>
-        <div class="abstract-content">
-            最近刚好在研究XSS的东西，今晚本来备课，看到这道好题环境还在，就做一下吧
-Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
-注册登录整理下思路初步猜想是通过xss+csrf去上传图片然后可能有一个截图的点，猜测的话是一个SSRF的点，暂时不知道怎么利用  
-注意到有csrf的token  
-
-发现cookie和csrf的token值是一样的  
-发现登录接口是一个get请求  
-
-重新看一下发送消息的点这是我们消息的预览按照我们的猜测尝试了XSS，但是&lt;&gt;被过滤了这种情况的话基本常规的XSS肯定是走不通了，所以我们没办法...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/09</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/26/phpinfo-with-LFI/" >
-            
-                <span>phpinfo with LFI</span>
-        </a>
-        <div class="abstract-content">
-            利用场景PHP文件包含漏洞中，如果找不到可以包含的文件，我们可以通过包含临时文件的方法来getshell。因为临时文件名是随机的，如果目标网站上存在phpinfo，则可以通过phpinfo来获取临时文件名，进而进行包含。  
-漏洞原理本质是一个条件竞争在对一个页面进行文件上传时，无论这个页面将来是否要利用这个文件，php都会将这个文件保存成一个临时文件，默认为 tmp/php[\d\w]{6}关于这个文件的信息可以通过$_FILES变量获取，这个临时文件将在脚本执行结束时被php销毁所以我们可以在她销毁之前去进行包含，即文件在被销毁之前已经执行了，达到了我们写shelll的目的  
-漏洞...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/26</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/23/XSSme题目复现/" >
-            
-                <span>XSSme题目复现</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>hackme上一道感觉挺有意思的题目，看了dalao的文章复现一下<br>XSS+CSRF+Redis,可以说是一道非常nice的题目了(特别是作为写过xssbot的我看来<br>这样的优质题目真的良心<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/23</span>
-            </div>
-            <!-- tags  -->
             
         </div>
     </article>
     
     <!-- paginator  -->
-    
-    <nav class="page-nav">
-        <a class="extend prev" rel="prev" href="/archives/">&#60; PREV</a><a class="page-number" href="/archives/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><a class="page-number" href="/archives/page/5/">5</a><a class="extend next" rel="next" href="/archives/page/3/">NEXT &#62;</a>
-    </nav>
     
 </main>
             <!-- profile -->
