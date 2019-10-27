@@ -359,6 +359,39 @@ height:50vh;
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/01/17/JSONP劫持/" >
+            
+                <span>JSONP劫持</span>
+        </a>
+        <div class="abstract-content">
+            JSONP劫持因为同源策略的存在，很多时候我们需要跨域，除开CORS跨域，我们还常用JOSNP跨域。    
+JSONP跨域巧妙的利用了script标签能跨域的特点,实现了json的跨域传输。
+JSONP劫持又为“ JSON Hijacking ”，这里其实是属于CSRF的范畴。攻击者可以在自己的站点中写入一条访问Json的JS，在用户Cookie未过期的情况下，Json中会返回敏感的用户信息，然后攻击者可以获取到数据，并发送到自己的站点。
+它通常出现在一个使用了回调函数的接口当中  
+例如这样一个获取id和用户名的接口12345678&lt;?phpheader(&apos;Conte...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/17</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "前端安全">前端安全</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/12/27/SWPUCTF复现/" >
             
                 <span>SWPUCTF复现</span>
@@ -633,31 +666,6 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
         <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
     
 </div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/26/phpinfo-with-LFI/" >
-            
-                <span>phpinfo with LFI</span>
-        </a>
-        <div class="abstract-content">
-            利用场景PHP文件包含漏洞中，如果找不到可以包含的文件，我们可以通过包含临时文件的方法来getshell。因为临时文件名是随机的，如果目标网站上存在phpinfo，则可以通过phpinfo来获取临时文件名，进而进行包含。  
-漏洞原理本质是一个条件竞争在对一个页面进行文件上传时，无论这个页面将来是否要利用这个文件，php都会将这个文件保存成一个临时文件，默认为 tmp/php[\d\w]{6}关于这个文件的信息可以通过$_FILES变量获取，这个临时文件将在脚本执行结束时被php销毁所以我们可以在她销毁之前去进行包含，即文件在被销毁之前已经执行了，达到了我们写shelll的目的  
-漏洞...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/26</span>
-            </div>
-            <!-- tags  -->
             
         </div>
     </article>
@@ -1414,9 +1422,34 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 42
+        Total : 43
         </div>
         <!-- search  -->
         
@@ -1429,6 +1462,11 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/28</span><a class="archive-post-title" href= "/2019/10/28/2019巅峰极客Web-WP/" >2019巅峰极客Web WP</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1621,12 +1659,12 @@ Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
         </li>
     
     
