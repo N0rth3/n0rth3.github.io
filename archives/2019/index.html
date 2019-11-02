@@ -346,6 +346,31 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/11/03/深入理解linux-proc虚拟文件系统/" >
+            
+                <span>深入理解linux proc虚拟文件系统</span>
+        </a>
+        <div class="abstract-content">
+            Proc文件系统Linux系统上的/proc目录是一种文件系统，即proc文件系统。与其它常见的文件系统不同的是，/proc是一种伪文件系统（也即虚拟文件系统），存储的是当前内核运行状态的一系列特殊文件，用户可以通过这些文件查看有关系统硬件及当前正在运行进程的信息，甚至可以通过更改其中某些文件来改变内核的运行状态。
+/proc 文件系统是一种内核和内核模块用来向进程 (process) 发送信息的机制 (所以叫做 /proc)
+它只存在内存当中，而不占用外存空间。它以文件系统的方式为访问系统内核数据的操作提供接口。用户和应用程序可以通过proc得到系统的信息，并可以改变内核的某些参数。由...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/11/03</span>
+            </div>
+            <!-- tags  -->
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/10/28/2019巅峰极客Web-WP/" >
             
                 <span>2019巅峰极客Web WP</span>
@@ -608,46 +633,6 @@ SYSTEM_...
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/02</span>
             </div>
             <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2019/01/29/前端安全笔记/" >
-            
-                <span>前端安全笔记</span>
-        </a>
-        <div class="abstract-content">
-            最近在回炉重造，填填以前的坑，结合最近的面试写个回炉笔记记一下重点。  
-xssCross-Site Scripting（跨站脚本攻击）简称 XSS，是一种代码注入攻击。攻击者通过在目标网站上注入恶意脚本，使之在用户的浏览器上运行。利用这些恶意脚本，攻击者可获取用户的敏感信息如 Cookie、SessionID 等，进而危害数据安全。  
-通常将xss分为三类  
-
-反射型
-存储型
-dom型
-
-前端安全中面试官很喜欢关注的点在于反射型xss和dom型xss的区别
-因为反射型和存储型的区别可以说很简单了  
-更深入的讲解一下dom型xss  
-dom，全称Document Object M...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/01/29</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "前端安全">前端安全</a>
-    
-</div>
             
         </div>
     </article>
@@ -1313,9 +1298,38 @@ dom，全称Document Object M...
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 43
+        Total : 44
         </div>
         <!-- search  -->
         
@@ -1328,6 +1342,11 @@ dom，全称Document Object M...
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/03</span><a class="archive-post-title" href= "/2019/11/03/深入理解linux-proc虚拟文件系统/" >深入理解linux proc虚拟文件系统</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1525,12 +1544,12 @@ dom，全称Document Object M...
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
         </li>
     
     
@@ -1567,9 +1586,9 @@ dom，全称Document Object M...
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="WP"><span class="iconfont-archer">&#xe606;</span>WP</span>
-    
         <span class="sidebar-tag-name" data-tags="Writeup"><span class="iconfont-archer">&#xe606;</span>Writeup</span>
+    
+        <span class="sidebar-tag-name" data-tags="WP"><span class="iconfont-archer">&#xe606;</span>WP</span>
     
         <span class="sidebar-tag-name" data-tags="SSRF"><span class="iconfont-archer">&#xe606;</span>SSRF</span>
     

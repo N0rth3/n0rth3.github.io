@@ -22,7 +22,7 @@
     <meta name="description" content="每一顶白帽都有一道黑边">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>N0rth3ty&#39;s Blog</title>
+    <title>深入理解linux proc虚拟文件系统 · N0rth3ty&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -203,12 +203,23 @@
 </head>
 
     
+        <body class="post-body">
+    
     
 <header class="header">
 
     <div class="read-progress"></div>
     <div class="header-sidebar-menu">&#xe775;</div>
     <!-- post页的toggle banner  -->
+    
+    <div class="banner">
+            <div class="blog-title">
+                <a href="/" >N0rth3ty&#39;s Blog.</a>
+            </div>
+            <div class="post-title">
+                <a href="#" class="post-name">深入理解linux proc虚拟文件系统</a>
+            </div>
+    </div>
     
     <a class="home-link" href=/>N0rth3ty's Blog.</a>
 </header>
@@ -220,24 +231,68 @@
 
 
 
+
+height:50vh;
 ">
     
     <!-- 主页  -->
+    
+    
+    <!-- 404页  -->
             
     <div class="site-intro-placeholder"></div>
-    <div class="site-intro-img" style="background-image: url(/)"></div>
+    <div class="site-intro-img" style="background-image: url(/img/02.jpg)"></div>
     <div class="site-intro-meta">
         <!-- 标题  -->
         <h1 class="intro-title">
             <!-- 主页  -->
+            
+            深入理解linux proc虚拟文件系统
+            <!-- 404 -->
             
         </h1>
         <!-- 副标题 -->
         <p class="intro-subtitle">
             <!-- 主页副标题  -->
             
+            
+            <!-- 404 -->
+            
         </p>
         <!-- 文章页meta -->
+        
+            <div class="post-intros">
+                <!-- 文章页标签  -->
+                
+                
+                    <div class="post-intro-read">
+                        <span>字数统计: <span class="post-count word-count">1.8k</span>阅读时长: <span class="post-count reading-time">6 min</span></span>
+                    </div>
+                
+                <div class="post-intro-meta">
+                    <span class="post-intro-calander iconfont-archer">&#xe676;</span>
+                    <span class="post-intro-time">2019/11/03</span>
+                    
+                    <span id="busuanzi_container_page_pv" class="busuanzi-pv">
+                        <span class="iconfont-archer">&#xe602;</span>
+                        <span id="busuanzi_value_page_pv"></span>
+                    </span>
+                    
+                    <span class="shareWrapper">
+                        <span class="iconfont-archer shareIcon">&#xe71d;</span>
+                        <span class="shareText">Share</span>
+                        <ul class="shareList">
+                            <li class="iconfont-archer share-qr" data-type="qr">&#xe75b;
+                                <div class="share-qrcode"></div>
+                            </li>
+                            <li class="iconfont-archer" data-type="weibo">&#xe619;</li>
+                            <li class="iconfont-archer" data-type="qzone">&#xe62e;</li>
+                            <li class="iconfont-archer" data-type="twitter">&#xe634;</li>
+                            <li class="iconfont-archer" data-type="facebook">&#xe67a;</li>
+                        </ul>
+                    </span>
+                </div>
+            </div>
         
     </div>
 </div>
@@ -338,271 +393,133 @@
 </script>        
         <img class="loading" src="/assets/loading.svg" style="display: block; margin: 6rem auto 0 auto; width: 6rem; height: 6rem;" />
         <div class="container container-unloaded">
-            <main class="main index-page">
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/23/XSSme题目复现/" >
-            
-                <span>XSSme题目复现</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>hackme上一道感觉挺有意思的题目，看了dalao的文章复现一下<br>XSS+CSRF+Redis,可以说是一道非常nice的题目了(特别是作为写过xssbot的我看来<br>这样的优质题目真的良心<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/23</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
+            <main class="main post-page">
+    <article class="article-entry">
+        <h2 id="Proc文件系统"><a href="#Proc文件系统" class="headerlink" title="Proc文件系统"></a>Proc文件系统</h2><p>Linux系统上的/proc目录是一种文件系统，即proc文件系统。与其它常见的文件系统不同的是，/proc是一种伪文件系统（也即虚拟文件系统），存储的是当前内核运行状态的一系列特殊文件，用户可以通过这些文件查看有关系统硬件及当前正在运行进程的信息，甚至可以通过更改其中某些文件来改变内核的运行状态。</p>
+<p>/proc 文件系统是一种内核和内核模块用来向进程 (process) 发送信息的机制 (所以叫做 /proc)</p>
+<p>它只存在内存当中，而不占用外存空间。它以文件系统的方式为访问系统内核数据的操作提供接口。用户和应用程序可以通过proc得到系统的信息，并可以改变内核的某些参数。由于系统的信息，如进程，是动态改变的，所以用户或应用程序读取proc文件时，proc文件系统是动态从系统内核读出所需信息并提交的。</p>
+<p>我们常常用它来追踪进程的状态、内核的状态、内存信息、CPU使用率、系统启动时间（可以使用系统正常运行时间）等相应的信息；</p>
+<p>个人理解就是系统内存的映射，可以直接访问这个目录来获取系统信息<br>体现了linux系统万物皆文件的特性<br><img src="/img/23_1.png" alt="image"><br>所以Proc文件系统是一个虚拟的文件系统  </p>
+<h3 id="Proc目录介绍"><a href="#Proc目录介绍" class="headerlink" title="Proc目录介绍"></a>Proc目录介绍</h3><p>proc目录截图<br><img src="/img/23_2.png" alt="image">  </p>
+<p>/proc目录中包含许多以数字命名的子目录，这些数字表示系统当前正在运行进程的进程号，里面包含对应进程相关的多个信息文件。  </p>
+<p>除此之外还直接有一些命名文件，这些文件记录了一些系统的信息  </p>
+<h2 id="进程目录中的常见文件介绍"><a href="#进程目录中的常见文件介绍" class="headerlink" title="进程目录中的常见文件介绍"></a>进程目录中的常见文件介绍</h2><p>随便打开一个进程目录<br><img src="/img/23_3.png" alt="image">  </p>
+<h3 id="cmdline"><a href="#cmdline" class="headerlink" title="cmdline"></a>cmdline</h3><p>启动当前进程的完整命令，但僵尸进程目录中的此文件不包含任何信息</p>
+<h3 id="cwd"><a href="#cwd" class="headerlink" title="cwd"></a>cwd</h3><p>指向当前进程运行目录的一个符号链接</p>
+<h3 id="exe"><a href="#exe" class="headerlink" title="exe"></a>exe</h3><p>指向启动当前进程的可执行文件（完整路径）的符号链接，通过/proc/N/exe可以启动当前进程的一个拷贝</p>
+<h3 id="fd"><a href="#fd" class="headerlink" title="fd"></a>fd</h3><p>这是个目录，包含当前进程打开的每一个文件的文件描述符（file descriptor），这些文件描述符是指向实际文件的一个符号链接</p>
+<h3 id="environ"><a href="#environ" class="headerlink" title="environ"></a>environ</h3><p>进程环境变量列表</p>
+<h3 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h3><ul>
+<li><p>/proc/N/exe 链接到进程的执行命令文件</p>
+</li>
+<li><p>/proc/N/fd 包含进程相关的所有的文件描述符</p>
+</li>
+<li><p>/proc/N/maps 与进程相关的内存映射信息</p>
+</li>
+<li><p>/proc/N/mem 指代进程持有的内存，不可读</p>
+</li>
+<li><p>/proc/N/root 链接到进程的根目录</p>
+</li>
+<li><p>/proc/N/stat 进程的状态</p>
+</li>
+<li><p>/proc/N/statm 进程使用的内存的状态</p>
+</li>
+<li><p>/proc/N/status 进程状态信息，比stat/statm更具可读性</p>
+</li>
+</ul>
+<h2 id="Proc根目录下常见文件介绍"><a href="#Proc根目录下常见文件介绍" class="headerlink" title="Proc根目录下常见文件介绍"></a>Proc根目录下常见文件介绍</h2><p>/proc/buddyinfo 每个内存区中的每个order有多少块可用，和内存碎片问题有关</p>
+<p>/proc/cmdline 启动时传递给kernel的参数信息</p>
+<p>/proc/cpuinfo cpu的信息</p>
+<p>/proc/crypto 内核使用的所有已安装的加密密码及细节</p>
+<p>/proc/devices 已经加载的设备并分类</p>
+<p>/proc/dma 已注册使用的ISA DMA频道列表</p>
+<p>/proc/execdomains linux内核当前支持的execution domains</p>
+<p>/proc/fb 帧缓冲设备列表，包括数量和控制它的驱动</p>
+<p>/proc/filesystems 内核当前支持的文件系统类型</p>
+<p>/proc/interrupts x86架构中的每个IRQ中断数</p>
+<p>/proc/iomem 每个物理设备当前在系统内存中的映射</p>
+<p>/proc/ioports 一个设备的输入输出所使用的注册端口范围</p>
+<p>/proc/kcore 代表系统的物理内存，存储为核心文件格式，里边显示的是字节数，等于RAM大小加上4kb</p>
+<p>/proc/kmsg 记录内核生成的信息，可以通过/sbin/klogd或/bin/dmesg来处理</p>
+<p>/proc/loadavg 根据过去一段时间内CPU和IO的状态得出的负载状态，与uptime命令有关</p>
+<p>/proc/locks 内核锁住的文件列表</p>
+<p>/proc/mdstat 多硬盘，RAID配置信息(md=multiple disks)</p>
+<p>/proc/meminfo RAM使用的相关信息</p>
+<p>/proc/misc 其他的主要设备(设备号为10)上注册的驱动</p>
+<p>/proc/modules 所有加载到内核的模块列表</p>
+<p>/proc/mounts 系统中使用的所有挂载</p>
+<p>/proc/mtrr 系统使用的Memory Type Range Registers (MTRRs)</p>
+<p>/proc/partitions 分区中的块分配信息</p>
+<p>/proc/pci 系统中的PCI设备列表</p>
+<p>/proc/slabinfo 系统中所有活动的 slab 缓存信息</p>
+<p>/proc/stat 所有的CPU活动信息</p>
+<p>/proc/sysrq-trigger 使用echo命令来写这个文件的时候，远程root用户可以执行大多数的系统请求关键命令，就好像在本地终端执行一样。要写入这个文件，需要把/proc/sys/kernel/sysrq不能设置为0。这个文件对root也是不可读的</p>
+<p>/proc/uptime 系统已经运行了多久</p>
+<p>/proc/swaps 交换空间的使用情况</p>
+<p>/proc/version Linux内核版本和gcc版本</p>
+<p>/proc/bus 系统总线(Bus)信息，例如pci/usb等</p>
+<p>/proc/driver 驱动信息</p>
+<p>/proc/fs 文件系统信息</p>
+<p>/proc/ide ide设备信息</p>
+<p>/proc/irq 中断请求设备信息</p>
+<p>/proc/net 网卡设备信息</p>
+<p>/proc/scsi scsi设备信息</p>
+<p>/proc/tty tty设备信息</p>
+<p>/proc/net/dev 显示网络适配器及统计信息</p>
+<p>/proc/vmstat 虚拟内存统计信息</p>
+<p>/proc/vmcore 内核panic时的内存映像</p>
+<p>/proc/diskstats 取得磁盘信息</p>
+<p>/proc/schedstat kernel调度器的统计信息</p>
+<p>/proc/zoneinfo 显示内存空间的统计信息，对分析虚拟内存行为很有用</p>
+<h3 id="proc-self"><a href="#proc-self" class="headerlink" title="/proc/self"></a>/proc/self</h3><p>/proc/self 是一个有趣的子目录，它使得程序可以方便地使用 /proc 查找本进程地信息。/proc/self 是一个链接到 /proc 中访问 /proc 的进程所对应的 PID 的目录的符号链接。  </p>
+<p>经常在实战中会运用到<br>ctf和实战中常用到的就是/proc/self/cwd和/proc/self/environ</p>
+<h2 id="CTF和实战"><a href="#CTF和实战" class="headerlink" title="CTF和实战"></a>CTF和实战</h2><p>就是运用于可以读取文件但是不知道绝对路径的情况<br>或者需要一些其他的环境变量  </p>
+<p>今年CNSS的招新题目  </p>
+<p><img src="/img/23_4.png" alt="image"><br>直接读flag是不行了，有一个读源码的接口，读取下来看看<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&apos;/file&apos;)</span><br><span class="line">def profile():</span><br><span class="line">    filename = os.path.join(&apos;./&apos;, request.args[&apos;name&apos;])</span><br><span class="line">    </span><br><span class="line">    try:</span><br><span class="line">        if os.path.abspath(filename).startswith(os.getcwd()) and filename != &apos;./profile&apos;:</span><br><span class="line">            return &apos;No No No&apos;, 422</span><br><span class="line"></span><br><span class="line">        content = open(filename).read()</span><br><span class="line">        return content, 200</span><br><span class="line">    except Exception:</span><br><span class="line">        return &apos;Error in reading your profile&apos;, 500</span><br></pre></td></tr></table></figure></p>
+<p>这里的意思是如果要读取的文件在当前目录，那文件名必须是profile，如果不是就返回no  </p>
+<p>实战中可能是不支持相对路径，然后我们又不知道绝对路径，或者我们需要往绝对路径写等  </p>
+<p>这个时候就可以利用proc虚拟文件系统  </p>
+<p><img src="/img/23_5.png" alt="image">  </p>
+
     </article>
+    <!-- license  -->
     
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/21/渗透测试0x00-信息收集/" >
-            
-                <span>渗透测试0x00 信息收集</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>写这篇文章是总结一下思路，思考接下来的信息收集工具应该怎么开发。<br>借着这次课设的机会，刚好能够开发一个具备子域名搜集和站点地图探查的工具。<br>理想的应该是带上目标IP，指纹，端口等等一系列的集成工具。  </p>
-<p>同时，随着学习的不断深入，越加明白信息收集的重要性。<br>
+        <div class="license-wrapper">
+            <p>原文作者：<a href="http://yoursite.com">N0rth3ty</a>
+            <p>原文链接：<a href="http://yoursite.com/2019/11/03/深入理解linux-proc虚拟文件系统/">http://yoursite.com/2019/11/03/深入理解linux-proc虚拟文件系统/</a>
+            <p>发表日期：<a href="http://yoursite.com/2019/11/03/深入理解linux-proc虚拟文件系统/">November 3rd 2019, 12:38:45 am</a>
+            <p>更新日期：<a href="http://yoursite.com/2019/11/03/深入理解linux-proc虚拟文件系统/">November 3rd 2019, 12:42:30 am</a>
+            <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/21</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Pentest">Pentest</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/19/提权从入门到自闭/" >
-            
-                <span>提权从入门到自闭</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>通过各种办法和漏洞，提高自己在服务器中的权限，以便控制全局。<br>Windows：<br>                 User    &gt;&gt;   System<br> Linux：<br>                User    &gt;&gt;   Root</p>
-<p>提权攻击原理及提权方法<br>主要针对网站入侵过程中,当入侵某一网站时，通过各种漏洞提升<br>WEBSHELL权限，从而进一步获得服务器权限。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/19</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/17/浅析SSTI/" >
-            
-                <span>浅析SSTI</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="SSTI"><a href="#SSTI" class="headerlink" title="SSTI"></a>SSTI</h2><p>Server-side Template Injection（简称SSTI）是服务端模板注入攻击，和常见的web注入一样，是服务端接收了用户的输入，将其作为 Web 应用模板内容的一部分，在进行目标编译渲染的过程中，执行了用户插入的恶意内容，因而可能导致了敏感信息泄露、代码执行、GetShell 等问题。其影响范围主要取决于模版引擎的复杂性。</p>
-<p>利用的难点也在于对使用的模板引擎的判断<br><img src="/img/8_2.jpg" alt="image"><br>本文主要讲Flask框架的jinja2模板<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/17</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/15/Hash长度扩展攻击/" >
-            
-                <span>Hash长度扩展攻击</span>
-        </a>
-        <div class="abstract-content">
-            <p>学习学习！要开始疯狂写博客了<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/15</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/15/护网杯Web-WP/" >
-            
-                <span>护网杯Web WP</span>
-        </a>
-        <div class="abstract-content">
-            <p>Web3看出来是个fastjson反序列化Rce了，可是太菜了不会做<br>不要眼高手低了，多动手，多写代码，多复现<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/15</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/01/XSSbot从入门到放弃/" >
-            
-                <span>XSSbot从入门到放弃</span>
-        </a>
-        <div class="abstract-content">
-            <h1 id="出题真难"><a href="#出题真难" class="headerlink" title="出题真难"></a>出题真难</h1><p>刚开始的时候是从简单的题目开始出吧，那就先XSS吧，这么简单。<br>然后发现，出题真难。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/01</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/09/12/网鼎杯第三场WP/" >
-            
-                <span>网鼎杯第三场WP</span>
-        </a>
-        <div class="abstract-content">
-            <p>有的时候题目虽然会做，但基础决定很多东西<br>大概这是这场比赛给我最大的感受<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/12</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/09/11/浅谈XXE漏洞/" >
-            
-                <span>浅谈XXE漏洞</span>
-        </a>
-        <div class="abstract-content">
-            <p>写一写关于一些漏洞的具体理解<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/11</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/09/11/网鼎杯第一场WP/" >
-            
-                <span>网鼎杯第一场WP</span>
-        </a>
-        <div class="abstract-content">
-            <p>网鼎第一场，题目还是蛮有意思的，fakebook最后零解了。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/11</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
-            
-        </div>
-    </article>
     
     <!-- paginator  -->
+    <ul class="post-paginator">
+        <li class="next">
+            
+        </li>
+        <li class="previous">
+            
+                <div class="prevSlogan">Previous Post</div>
+                <a href= "/2019/10/28/2019巅峰极客Web-WP/" title= "2019巅峰极客Web WP">
+                    <div class="prevTitle">2019巅峰极客Web WP</div>
+                </a>
+            
+        </li>
+    </ul>
+    <!-- 评论插件 -->
+    <!-- 来必力City版安装代码 -->
+
+<!-- City版安装代码已完成 -->
     
-    <nav class="page-nav">
-        <a class="extend prev" rel="prev" href="/archives/2018/">&#60; PREV</a><a class="page-number" href="/archives/2018/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/2018/page/3/">3</a><a class="page-number" href="/archives/2018/page/4/">4</a><a class="extend next" rel="next" href="/archives/2018/page/3/">NEXT &#62;</a>
-    </nav>
     
+    <!-- partial('_partial/comment/changyan') -->
+    <!--PC版-->
+
+
+    
+    
+
+    <!-- 评论 -->
 </main>
             <!-- profile -->
             
@@ -678,6 +595,24 @@
 </footer>
     </div>
     <!-- toc -->
+    
+    <div class="toc-wrapper" style=
+    
+
+
+
+
+
+
+
+top:50vh;
+
+    >
+        <div class="toc-catalog">
+            <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
+        </div>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Proc文件系统"><span class="toc-number">1.</span> <span class="toc-text">Proc文件系统</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Proc目录介绍"><span class="toc-number">1.1.</span> <span class="toc-text">Proc目录介绍</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#进程目录中的常见文件介绍"><span class="toc-number">2.</span> <span class="toc-text">进程目录中的常见文件介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#cmdline"><span class="toc-number">2.1.</span> <span class="toc-text">cmdline</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#cwd"><span class="toc-number">2.2.</span> <span class="toc-text">cwd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#exe"><span class="toc-number">2.3.</span> <span class="toc-text">exe</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#fd"><span class="toc-number">2.4.</span> <span class="toc-text">fd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#environ"><span class="toc-number">2.5.</span> <span class="toc-text">environ</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#其它"><span class="toc-number">2.6.</span> <span class="toc-text">其它</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Proc根目录下常见文件介绍"><span class="toc-number">3.</span> <span class="toc-text">Proc根目录下常见文件介绍</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#proc-self"><span class="toc-number">3.1.</span> <span class="toc-text">/proc/self</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CTF和实战"><span class="toc-number">4.</span> <span class="toc-text">CTF和实战</span></a></li></ol>
+    </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
     <div class="sidebar sidebar-hide">
@@ -1629,6 +1564,8 @@ jsonContent:
     
     </div>
     <!-- async load share.js -->
+    
+        <script src="/scripts/share.js" async></script>    
      
     </body>
 </html>

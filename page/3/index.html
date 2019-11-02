@@ -359,6 +359,43 @@ height:50vh;
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2018/11/09/SECCON-Web/" >
+            
+                <span>SECCON Web</span>
+        </a>
+        <div class="abstract-content">
+            最近刚好在研究XSS的东西，今晚本来备课，看到这道好题环境还在，就做一下吧
+Ghostkingdomhttp://ghostkingdom.pwn.seccon.jp/FLAG/
+注册登录整理下思路初步猜想是通过xss+csrf去上传图片然后可能有一个截图的点，猜测的话是一个SSRF的点，暂时不知道怎么利用  
+注意到有csrf的token  
+
+发现cookie和csrf的token值是一样的  
+发现登录接口是一个get请求  
+
+重新看一下发送消息的点这是我们消息的预览按照我们的猜测尝试了XSS，但是&lt;&gt;被过滤了这种情况的话基本常规的XSS肯定是走不通了，所以我们没办法...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/09</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2018/10/26/phpinfo-with-LFI/" >
             
                 <span>phpinfo with LFI</span>
@@ -579,29 +616,6 @@ height:50vh;
         <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
     
 </div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/09/11/浅谈XXE漏洞/" >
-            
-                <span>浅谈XXE漏洞</span>
-        </a>
-        <div class="abstract-content">
-            <p>写一写关于一些漏洞的具体理解<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/11</span>
-            </div>
-            <!-- tags  -->
             
         </div>
     </article>
@@ -1371,9 +1385,38 @@ height:50vh;
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 43
+        Total : 44
         </div>
         <!-- search  -->
         
@@ -1386,6 +1429,11 @@ height:50vh;
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">11/03</span><a class="archive-post-title" href= "/2019/11/03/深入理解linux-proc虚拟文件系统/" >深入理解linux proc虚拟文件系统</a>
+        </li>
     
     
         <li class="archive-post-item">
@@ -1583,12 +1631,12 @@ height:50vh;
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
         </li>
     
     
         <li class="archive-post-item">
-            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x01/" >Python笔记 0x01</a>
+            <span class="archive-post-date">02/07</span><a class="archive-post-title" href= "/2018/02/07/Python笔记 0x02/" >Python笔记 0x02</a>
         </li>
     
     
@@ -1625,9 +1673,9 @@ height:50vh;
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="WP"><span class="iconfont-archer">&#xe606;</span>WP</span>
-    
         <span class="sidebar-tag-name" data-tags="Writeup"><span class="iconfont-archer">&#xe606;</span>Writeup</span>
+    
+        <span class="sidebar-tag-name" data-tags="WP"><span class="iconfont-archer">&#xe606;</span>WP</span>
     
         <span class="sidebar-tag-name" data-tags="SSRF"><span class="iconfont-archer">&#xe606;</span>SSRF</span>
     

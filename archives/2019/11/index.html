@@ -346,262 +346,26 @@
     
     
     <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/23/XSSme题目复现/" >
+        <a class="abstract-title" href = "/2019/11/03/深入理解linux-proc虚拟文件系统/" >
             
-                <span>XSSme题目复现</span>
+                <span>深入理解linux proc虚拟文件系统</span>
         </a>
         <div class="abstract-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>hackme上一道感觉挺有意思的题目，看了dalao的文章复现一下<br>XSS+CSRF+Redis,可以说是一道非常nice的题目了(特别是作为写过xssbot的我看来<br>这样的优质题目真的良心<br>
+            Proc文件系统Linux系统上的/proc目录是一种文件系统，即proc文件系统。与其它常见的文件系统不同的是，/proc是一种伪文件系统（也即虚拟文件系统），存储的是当前内核运行状态的一系列特殊文件，用户可以通过这些文件查看有关系统硬件及当前正在运行进程的信息，甚至可以通过更改其中某些文件来改变内核的运行状态。
+/proc 文件系统是一种内核和内核模块用来向进程 (process) 发送信息的机制 (所以叫做 /proc)
+它只存在内存当中，而不占用外存空间。它以文件系统的方式为访问系统内核数据的操作提供接口。用户和应用程序可以通过proc得到系统的信息，并可以改变内核的某些参数。由...
         </div>
         <div class="abstract-post-meta">
             <!-- date  -->
             <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/23</span>
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/11/03</span>
             </div>
             <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/21/渗透测试0x00-信息收集/" >
-            
-                <span>渗透测试0x00 信息收集</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>写这篇文章是总结一下思路，思考接下来的信息收集工具应该怎么开发。<br>借着这次课设的机会，刚好能够开发一个具备子域名搜集和站点地图探查的工具。<br>理想的应该是带上目标IP，指纹，端口等等一系列的集成工具。  </p>
-<p>同时，随着学习的不断深入，越加明白信息收集的重要性。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/21</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Pentest">Pentest</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/19/提权从入门到自闭/" >
-            
-                <span>提权从入门到自闭</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h2><p>通过各种办法和漏洞，提高自己在服务器中的权限，以便控制全局。<br>Windows：<br>                 User    &gt;&gt;   System<br> Linux：<br>                User    &gt;&gt;   Root</p>
-<p>提权攻击原理及提权方法<br>主要针对网站入侵过程中,当入侵某一网站时，通过各种漏洞提升<br>WEBSHELL权限，从而进一步获得服务器权限。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/19</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/17/浅析SSTI/" >
-            
-                <span>浅析SSTI</span>
-        </a>
-        <div class="abstract-content">
-            <h2 id="SSTI"><a href="#SSTI" class="headerlink" title="SSTI"></a>SSTI</h2><p>Server-side Template Injection（简称SSTI）是服务端模板注入攻击，和常见的web注入一样，是服务端接收了用户的输入，将其作为 Web 应用模板内容的一部分，在进行目标编译渲染的过程中，执行了用户插入的恶意内容，因而可能导致了敏感信息泄露、代码执行、GetShell 等问题。其影响范围主要取决于模版引擎的复杂性。</p>
-<p>利用的难点也在于对使用的模板引擎的判断<br><img src="/img/8_2.jpg" alt="image"><br>本文主要讲Flask框架的jinja2模板<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/17</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/15/Hash长度扩展攻击/" >
-            
-                <span>Hash长度扩展攻击</span>
-        </a>
-        <div class="abstract-content">
-            <p>学习学习！要开始疯狂写博客了<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/15</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/15/护网杯Web-WP/" >
-            
-                <span>护网杯Web WP</span>
-        </a>
-        <div class="abstract-content">
-            <p>Web3看出来是个fastjson反序列化Rce了，可是太菜了不会做<br>不要眼高手低了，多动手，多写代码，多复现<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/15</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/10/01/XSSbot从入门到放弃/" >
-            
-                <span>XSSbot从入门到放弃</span>
-        </a>
-        <div class="abstract-content">
-            <h1 id="出题真难"><a href="#出题真难" class="headerlink" title="出题真难"></a>出题真难</h1><p>刚开始的时候是从简单的题目开始出吧，那就先XSS吧，这么简单。<br>然后发现，出题真难。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/10/01</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/09/12/网鼎杯第三场WP/" >
-            
-                <span>网鼎杯第三场WP</span>
-        </a>
-        <div class="abstract-content">
-            <p>有的时候题目虽然会做，但基础决定很多东西<br>大概这是这场比赛给我最大的感受<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/12</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/09/11/浅谈XXE漏洞/" >
-            
-                <span>浅谈XXE漏洞</span>
-        </a>
-        <div class="abstract-content">
-            <p>写一写关于一些漏洞的具体理解<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/11</span>
-            </div>
-            <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/09/11/网鼎杯第一场WP/" >
-            
-                <span>网鼎杯第一场WP</span>
-        </a>
-        <div class="abstract-content">
-            <p>网鼎第一场，题目还是蛮有意思的，fakebook最后零解了。<br>
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/09/11</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
             
         </div>
     </article>
     
     <!-- paginator  -->
-    
-    <nav class="page-nav">
-        <a class="extend prev" rel="prev" href="/archives/2018/">&#60; PREV</a><a class="page-number" href="/archives/2018/">1</a><span class="page-number current">2</span><a class="page-number" href="/archives/2018/page/3/">3</a><a class="page-number" href="/archives/2018/page/4/">4</a><a class="extend next" rel="next" href="/archives/2018/page/3/">NEXT &#62;</a>
-    </nav>
     
 </main>
             <!-- profile -->
