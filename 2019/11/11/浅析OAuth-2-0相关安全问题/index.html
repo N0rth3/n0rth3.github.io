@@ -22,7 +22,7 @@
     <meta name="description" content="每一顶白帽都有一道黑边">
     <meta http-equiv="Cache-control" content="no-cache">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
-    <title>Python笔记 0x00 · N0rth3ty&#39;s Blog</title>
+    <title>浅析OAuth 2.0相关安全问题 · N0rth3ty&#39;s Blog</title>
     <style type="text/css">
     @font-face {
         font-family: 'Oswald-Regular';
@@ -217,7 +217,7 @@
                 <a href="/" >N0rth3ty&#39;s Blog.</a>
             </div>
             <div class="post-title">
-                <a href="#" class="post-name">Python笔记 0x00</a>
+                <a href="#" class="post-name">浅析OAuth 2.0相关安全问题</a>
             </div>
     </div>
     
@@ -247,7 +247,7 @@ height:50vh;
         <h1 class="intro-title">
             <!-- 主页  -->
             
-            Python笔记 0x00
+            浅析OAuth 2.0相关安全问题
             <!-- 404 -->
             
         </h1>
@@ -264,20 +264,14 @@ height:50vh;
             <div class="post-intros">
                 <!-- 文章页标签  -->
                 
-                    <div class= post-intro-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "Python">Python</a>
-    
-</div>
-                
                 
                     <div class="post-intro-read">
-                        <span>字数统计: <span class="post-count word-count">648</span>阅读时长: <span class="post-count reading-time">2 min</span></span>
+                        <span>字数统计: <span class="post-count word-count">1.2k</span>阅读时长: <span class="post-count reading-time">4 min</span></span>
                     </div>
                 
                 <div class="post-intro-meta">
                     <span class="post-intro-calander iconfont-archer">&#xe676;</span>
-                    <span class="post-intro-time">2018/02/03</span>
+                    <span class="post-intro-time">2019/11/11</span>
                     
                     <span id="busuanzi_container_page_pv" class="busuanzi-pv">
                         <span class="iconfont-archer">&#xe602;</span>
@@ -401,112 +395,46 @@ height:50vh;
         <div class="container container-unloaded">
             <main class="main post-page">
     <article class="article-entry">
-        <p><strong>Python基础</strong><br><a id="more"></a></p>
-<h2 id="Python特点"><a href="#Python特点" class="headerlink" title="Python特点"></a>Python特点</h2><ul>
-<li>人生苦短，我用Python</li>
-<li>大量的第三方库</li>
-<li>开源</li>
-<li>无需考虑底层细节</li>
-<li>面向对象</li>
-<li>动态强类型语言</li>
-</ul>
-<h2 id="Python基础"><a href="#Python基础" class="headerlink" title="Python基础"></a>Python基础</h2><ul>
-<li><p>输入<br>input()方法 </p>
-<pre><code>t = input(&quot;test:&quot;)
-</code></pre></li>
-<li><p>输出<br>print()方法  </p>
-<pre><code>print(&apos;test&apos;)
-</code></pre></li>
-<li>变量<br>变量可以是任意数据类型，整数浮点数字符串等</li>
-<li>数据类型  <ul>
-<li>整数</li>
-<li>浮点数</li>
-<li>字符串</li>
-<li>布尔值（与或非）</li>
-<li>空值（None）</li>
-<li>列表（list）</li>
-<li>元组（tuple）</li>
-<li>字典（dict）<h3 id="列表和元组"><a href="#列表和元组" class="headerlink" title="列表和元组"></a>列表和元组</h3><h4 id="列表"><a href="#列表" class="headerlink" title="列表"></a>列表</h4></li>
-</ul>
-</li>
-<li><p>list是一种可变有序集合<br> 初始化一个list</p>
-<pre><code>a = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;]
-</code></pre><p>通常用索引访问list中每一个元素的位置</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">a = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;]</span><br><span class="line">print(a[0])</span><br></pre></td></tr></table></figure>
-<p>越界时会报错<br>索引可以为负数，-1是最后一个元素</p>
-</li>
-<li><p>insert()方法<br>元素插入到指定位置  </p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">a = [&apos;a&apos;,&apos;b&apos;,&apos;c&apos;]</span><br><span class="line">a.insert(1,&apos;d&apos;)</span><br><span class="line">a =[&apos;a&apos;,&apos;d&apos;,&apos;b&apos;,&apos;c&apos;]</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>append()方法  </p>
-</li>
-<li><p>pop()方法<br>删除list末尾元素</p>
-<pre><code>pop()
-</code></pre><p>删除指定位置</p>
-<pre><code>pop(i)
-</code></pre></li>
-<li>可以直接赋值进行修改</li>
-<li>list的元素仍可以是list（类比二维数组）<h4 id="元组"><a href="#元组" class="headerlink" title="元组"></a>元组</h4></li>
-<li>和list类似，但初始化后无法修改，tuple是不变的</li>
-<li>必须在初始化时赋值</li>
-<li><p>只定义一个元素时要加逗号</p>
-<pre><code>a = (1,)
-</code></pre><p>否则定义的是1而不是一个tuple</p>
+        <p>OAuth是一套关于授权的网络标准<br>现在一般使用的是OAuth 2.0  </p>
+<h2 id="OAuth"><a href="#OAuth" class="headerlink" title="OAuth"></a>OAuth</h2><p>OAuth的核心是向第三方应用授予权限，也就是我们常见的第三方登陆  </p>
+<p>它的优势在于可以方便的控制权限等，不赘述  </p>
+<p>OAuth一共有四种授权方式  </p>
+<h3 id="授权码（authorization-code）"><a href="#授权码（authorization-code）" class="headerlink" title="授权码（authorization-code）"></a>授权码（authorization-code）</h3><p>授权码也就是我们常用的流程<br>它适用于那些有后端的 Web 应用。授权码通过前端传送，令牌则是储存在后端，而且所有与资源服务器的通信都在后端完成。这样的前后端分离，可以避免令牌泄漏。  </p>
+<p>这里以一次实际登陆A网站的流程为例<br>首先我们通常的登陆是这样<br><img src="./img/24_1.png" alt="image"><br>然后我们选择微信登陆<br><img src="./img/24_2.png" alt="image"><br>然后可以看到是请求了这样的一个数据包，然后同时会生成一个二维码，即让你用微信进行授权<br>先看一下OAuth相关各个字段的含义</p>
 <ul>
-<li>tuple不变的本质含义是tuple的指向不变，当tuple中含有list时，list的值可变。<h3 id="字典"><a href="#字典" class="headerlink" title="字典"></a>字典</h3></li>
+<li>response_type=code 表示使用的是授权码方式</li>
+<li>redirect_uri=http%3A%2F%2Fi.nosec.org% 是微信授权以后的回调地址  </li>
+<li>scope=snsapi_login 代表授权的范围，可能会存在修改scope越权的问题</li>
+<li>appid是身份校验，标志你来自哪个应用  </li>
+<li>state字段用于防范一种特殊的CSRF，具体后面解释  </li>
 </ul>
-</li>
-<li><p>使用键值对存储（key-vaule）</p>
-<pre><code>a = {&apos;a&apos;: 1,&apos;b&apos;:2,&apos;c&apos;:3}
-</code></pre></li>
-<li>键值对可以初始化时指定，也可以通过key放入，访问时key加引号</li>
-<li><p>可以用key作为索引获取值，也可以通过get(key)方法</p>
-<pre><code>a.get(a)
-</code></pre></li>
-<li><p>pop(key)方法可以删除指定的key-vbaule</p>
-</li>
-<li>dict的key必须是不可变对象</li>
-<li>字典是无序的<h3 id="set"><a href="#set" class="headerlink" title="set"></a>set</h3><h2 id="流程控制语句"><a href="#流程控制语句" class="headerlink" title="流程控制语句"></a>流程控制语句</h2><h3 id="条件判断"><a href="#条件判断" class="headerlink" title="条件判断"></a>条件判断</h3></li>
-<li>if  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">if a &gt; b:</span><br><span class="line">    pass</span><br><span class="line">else:</span><br><span class="line">    pass</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>else if 写为elif<br>注意冒号和缩进</p>
-<h3 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h3><ul>
-<li>for    <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">for x in m :</span><br><span class="line">    print(x)</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<p>m是一个可迭代对象，比如列表</p>
-<ul>
-<li><p>while</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">while True:</span><br><span class="line">            pass</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>break<br>在循环中，break可以提前退出循环</p>
-</li>
-<li>continue<br>continue可以跳过本次循环，开始下一次循环<h2 id="字符串及编码问题"><a href="#字符串及编码问题" class="headerlink" title="字符串及编码问题"></a>字符串及编码问题</h2></li>
-<li>编码的本质<br>计算机只能处理数字，约定数字所对应的符号。</li>
-<li>常用<ul>
-<li>utf-8</li>
-<li>unicode</li>
-</ul>
-</li>
-<li>decode()编码方法</li>
-<li>encode()解码方法</li>
-<li>ord()返回字母的整数表示</li>
-<li>chr()显示数字对应的字符</li>
-<li><p>字符串的格式化输入输出  </p>
-<pre><code>print(&apos;%s,%d&apos;%(&apos;string&apos;,50))
-</code></pre></li>
-</ul>
-<p>或者使用format()方法</p>
+<p>扫码授权以后会发生跳转，也就是下面这个包<br><img src="./img/24_3.png" alt="image"><br>code参数极为OAuth中的授权码<br>我们讲一下这个state参数<br>state在这里用于防范CSRF，如果没有这个state或者未对state做校验会发生什么呢<br>看一下利用方式，假设A是被攻击网站，我是攻击者<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">我用自己的微信扫码授权,然后跳转到redirect_uri  </span><br><span class="line">我拦截这个url,https://A.com/xxx?code=081vdwbI1SU6i008y0&amp;state=xxxxxxx  </span><br><span class="line">删除state参数后用于钓鱼  </span><br><span class="line">受害者点击后会在A网站登陆我的账号</span><br></pre></td></tr></table></figure></p>
+<p>但如果对state参数进行校验的话，受害者就会登陆失败<br>利用的成果是受害者登陆攻击者指定的账号<br>这种称为登陆型CSRF吧，一种脑洞大开的攻击方式</p>
+<p>A网站拿到授权码以后在后端请求获取令牌进行后续操作即可<br>后端的交互请求如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">https://b.com/oauth/token?</span><br><span class="line"> client_id=CLIENT_ID&amp;</span><br><span class="line"> client_secret=CLIENT_SECRET&amp;</span><br><span class="line"> grant_type=authorization_code&amp;</span><br><span class="line"> code=AUTHORIZATION_CODE&amp;</span><br><span class="line"> redirect_uri=CALLBACK_URL</span><br></pre></td></tr></table></figure></p>
+<p>client_secret是获取令牌的一个校验，其实就是一个秘钥，是你在申请接入OAuth时分配给的，能够避免攻击者取得code后自己去请求获得令牌  </p>
+<h3 id="隐藏式（implicit）"><a href="#隐藏式（implicit）" class="headerlink" title="隐藏式（implicit）"></a>隐藏式（implicit）</h3><p>也就是隐藏了获取授权码的过程，直接获取令牌<br>通常请求格式如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://b.com/oauth/authorize?</span><br><span class="line">  response_type=token&amp;</span><br><span class="line">  client_id=CLIENT_ID&amp;</span><br><span class="line">  redirect_uri=CALLBACK_URL&amp;</span><br><span class="line">  scope=read</span><br></pre></td></tr></table></figure></p>
+<p>同意授权后B会返回<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://a.com/callback#token=ACCESS_TOKEN</span><br></pre></td></tr></table></figure></p>
+<p>注意，令牌的位置是 URL 锚点（fragment），而不是查询字符串（querystring），这是因为 OAuth 2.0 允许跳转网址是 HTTP 协议，因此存在”中间人攻击”的风险，而浏览器跳转时，锚点不会发到服务器，就减少了泄漏令牌的风险  </p>
+<p>（上面这段是引用  </p>
+<p>解释起来锚点就是一个能快速返回的点，是一个前端的概念，并不会作为参数发送给服务器<br>但是可以被js取得，然后a通过js取得锚点的令牌就行通信即可  </p>
+<p>所以该种方式令牌完全在后台进行了传输，避免了中间人攻击<br>而OAuth设计的目标之一就是要让不支持https的网站使用<br>所以才会出现授权码这种东西  </p>
+<p>这里就再谈一下code的设计<br>为什么code没有防范使用http协议的网站被中间人攻击呢？<br>因为code拿到以后是要生成令牌的，但是OAuth中code只能使用一次<br>一个code被使用两次会导致令牌失效，所以即便被中间人窃取<br>因为受害者肯定会立刻生成令牌，所以并不能产生危害，顶多是授权失败  </p>
+<h3 id="密码式（password）"><a href="#密码式（password）" class="headerlink" title="密码式（password）"></a>密码式（password）</h3><p>密码式就是更进一步的隐藏式，直接通过账号密码进行授权<br>通常请求格式如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">https://oauth.b.com/token?</span><br><span class="line">  grant_type=password&amp;</span><br><span class="line">  username=USERNAME&amp;</span><br><span class="line">  password=PASSWORD&amp;</span><br><span class="line">  client_id=CLIENT_ID</span><br></pre></td></tr></table></figure></p>
+<p>密码式不需要跳转，直接返回令牌<br>该方式风险较大，提一下，不常见</p>
+<h3 id="客户端凭证（client-credentials）"><a href="#客户端凭证（client-credentials）" class="headerlink" title="客户端凭证（client credentials）"></a>客户端凭证（client credentials）</h3><p>最后一种方式是凭证式（client credentials），适用于没有前端的命令行应用，即在命令行下请求令牌  </p>
+<p>简单说这东西是提供给系统本身不是提供给用户使用的  </p>
+<p>常见请求格式为<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">https://oauth.b.com/token?</span><br><span class="line">  grant_type=client_credentials&amp;</span><br><span class="line">  client_id=CLIENT_ID&amp;</span><br><span class="line">  client_secret=CLIENT_SECRET</span><br></pre></td></tr></table></figure></p>
+<p>也是直接返回令牌  </p>
+<h3 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h3><p><a href="http://www.ruanyifeng.com/blog/2019/04/oauth-grant-types.html" target="_blank" rel="noopener">http://www.ruanyifeng.com/blog/2019/04/oauth-grant-types.html</a><br><a href="https://www.chrisyue.com/security-issue-about-oauth-2-0-you-should-know.html" target="_blank" rel="noopener">https://www.chrisyue.com/security-issue-about-oauth-2-0-you-should-know.html</a></p>
 
     </article>
     <!-- license  -->
     
         <div class="license-wrapper">
             <p>原文作者：<a href="http://yoursite.com">N0rth3ty</a>
-            <p>原文链接：<a href="http://yoursite.com/2018/02/03/Python笔记 0x00/">http://yoursite.com/2018/02/03/Python笔记 0x00/</a>
-            <p>发表日期：<a href="http://yoursite.com/2018/02/03/Python笔记 0x00/">February 3rd 2018, 9:23:21 pm</a>
-            <p>更新日期：<a href="http://yoursite.com/2018/02/03/Python笔记 0x00/">February 3rd 2018, 10:39:25 pm</a>
+            <p>原文链接：<a href="http://yoursite.com/2019/11/11/浅析OAuth-2-0相关安全问题/">http://yoursite.com/2019/11/11/浅析OAuth-2-0相关安全问题/</a>
+            <p>发表日期：<a href="http://yoursite.com/2019/11/11/浅析OAuth-2-0相关安全问题/">November 11th 2019, 5:04:18 pm</a>
+            <p>更新日期：<a href="http://yoursite.com/2019/11/11/浅析OAuth-2-0相关安全问题/">November 11th 2019, 5:06:31 pm</a>
             <p>版权声明：本文采用<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">知识共享署名-非商业性使用 4.0 国际许可协议</a>进行许可</p>
         </div>
     
@@ -514,17 +442,12 @@ height:50vh;
     <ul class="post-paginator">
         <li class="next">
             
-                <div class="nextSlogan">Next Post</div>
-                <a href= "/2018/02/04/Python爬虫(一)/" title= "Python爬虫(一)">
-                    <div class="nextTitle">Python爬虫(一)</div>
-                </a>
-            
         </li>
         <li class="previous">
             
                 <div class="prevSlogan">Previous Post</div>
-                <a href= "/2018/01/24/教务系统成绩自动化推送脚本/" title= "教务系统成绩自动化推送脚本">
-                    <div class="prevTitle">教务系统成绩自动化推送脚本</div>
+                <a href= "/2019/11/03/深入理解linux-proc虚拟文件系统/" title= "深入理解linux proc虚拟文件系统">
+                    <div class="prevTitle">深入理解linux proc虚拟文件系统</div>
                 </a>
             
         </li>
@@ -634,7 +557,7 @@ top:50vh;
         <div class="toc-catalog">
             <span class="iconfont-archer catalog-icon">&#xe613;</span><span>CATALOG</span>
         </div>
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Python特点"><span class="toc-number">1.</span> <span class="toc-text">Python特点</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Python基础"><span class="toc-number">2.</span> <span class="toc-text">Python基础</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#列表和元组"><span class="toc-number">2.1.</span> <span class="toc-text">列表和元组</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#列表"><span class="toc-number">2.1.1.</span> <span class="toc-text">列表</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#元组"><span class="toc-number">2.1.2.</span> <span class="toc-text">元组</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#字典"><span class="toc-number">2.2.</span> <span class="toc-text">字典</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#set"><span class="toc-number">2.3.</span> <span class="toc-text">set</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#流程控制语句"><span class="toc-number">3.</span> <span class="toc-text">流程控制语句</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#条件判断"><span class="toc-number">3.1.</span> <span class="toc-text">条件判断</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#循环"><span class="toc-number">3.2.</span> <span class="toc-text">循环</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字符串及编码问题"><span class="toc-number">4.</span> <span class="toc-text">字符串及编码问题</span></a></li></ol>
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#OAuth"><span class="toc-number">1.</span> <span class="toc-text">OAuth</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#授权码（authorization-code）"><span class="toc-number">1.1.</span> <span class="toc-text">授权码（authorization-code）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#隐藏式（implicit）"><span class="toc-number">1.2.</span> <span class="toc-text">隐藏式（implicit）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#密码式（password）"><span class="toc-number">1.3.</span> <span class="toc-text">密码式（password）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#客户端凭证（client-credentials）"><span class="toc-number">1.4.</span> <span class="toc-text">客户端凭证（client credentials）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#参考链接"><span class="toc-number">1.5.</span> <span class="toc-text">参考链接</span></a></li></ol></li></ol>
     </div>
     
     <div class="back-top iconfont-archer">&#xe639;</div>
