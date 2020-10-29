@@ -346,6 +346,40 @@
     
     
     <article class="index-post">
+        <a class="abstract-title" href = "/2019/03/03/记一次实战/" >
+            
+                <span>记一次实战</span>
+        </a>
+        <div class="abstract-content">
+            入坑后的一次实战简单浏览一下挂载了一个流量分析插件然后一个搜索功能，没了没什么入手点，信息收集一下有cdn，没法获取真实IPwhois什么的一通搜索后都没有什么有用信息  
+扫了下后台也没扫出来，有些一筹莫展(果然没有后台路径就没地方日了google hacking 峰回路转  
+  
+这扫得出来才有鬼了感觉是套比较老的模版  
+后台登陆用户名处可以报错泄漏了网站路径等敏感信息部分截图  
+对登陆流程抓包分析过程中发现了一处细节对/admin_main.aspx的请求报错泄漏了源代码看到是基于cookie做的判断，不知道有没有后续的验证过程，猜想可能可以越权先构造包尝试一下设置admin...
+        </div>
+        <div class="abstract-post-meta">
+            <!-- date  -->
+            <div class="abstract-date">
+                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2019/03/03</span>
+            </div>
+            <!-- tags  -->
+            
+            <div class= abstract-tags >
+    
+        <a class="post-tag" href="javascript:void(0);" data-tags = "渗透测试">渗透测试</a>
+    
+</div>
+            
+        </div>
+    </article>
+    
+    
+    
+    
+    
+    
+    <article class="index-post">
         <a class="abstract-title" href = "/2019/03/02/Sql注入手册/" >
             
                 <span>Sql注入手册</span>
@@ -632,37 +666,6 @@ a stub
                 <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/14</span>
             </div>
             <!-- tags  -->
-            
-        </div>
-    </article>
-    
-    
-    
-    
-    
-    
-    <article class="index-post">
-        <a class="abstract-title" href = "/2018/11/12/HCTF-WEB部分题解/" >
-            
-                <span>HCTF WEB部分题解</span>
-        </a>
-        <div class="abstract-content">
-            hide and seek这个题上来看到cookie感觉有点像jwt，然后又要admin登陆再加上文件上传的点提示有个secret，大概猜到是要读一个key伪造cookie登陆zip后台是解析了的，所以一开始跑偏了，想到Zip Slip目录遍历漏洞这里我没法判断是个什么语言的站(tcl后来老大告知可以用软链接12ln -s /ect/passwd testzip -y test.zip test
-先知上有篇文章 https://xz.aliyun.com/t/2589测试了一下确实可以读到东西然后又不知道读什么，就卡住了  
-然后看一下配置文件1234567891011121314151...
-        </div>
-        <div class="abstract-post-meta">
-            <!-- date  -->
-            <div class="abstract-date">
-                <span class="abstract-calander iconfont-archer">&#xe676;</span><span class="abstract-time">2018/11/12</span>
-            </div>
-            <!-- tags  -->
-            
-            <div class= abstract-tags >
-    
-        <a class="post-tag" href="javascript:void(0);" data-tags = "WP">WP</a>
-    
-</div>
             
         </div>
     </article>
@@ -1372,9 +1375,24 @@ a stub
     
     
     
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     <div class="total-and-search">
         <div class="total-archive">
-        Total : 45
+        Total : 46
         </div>
         <!-- search  -->
         
@@ -1384,6 +1402,20 @@ a stub
     
     
     
+    
+    <div class="archive-year"> 2020 </div>
+    <ul class="year-list">
+    
+    
+        <li class="archive-post-item">
+            <span class="archive-post-date">10/30</span><a class="archive-post-title" href= "/2020/10/30/ByteCTF初赛出题笔记/" >ByteCTF初赛出题笔记</a>
+        </li>
+    
+    
+    
+    
+    
+        </ul>
     
     <div class="archive-year"> 2019 </div>
     <ul class="year-list">
@@ -1636,9 +1668,9 @@ a stub
         <div class="sidebar-panel-tags">
     <div class="sidebar-tags-name">
     
-        <span class="sidebar-tag-name" data-tags="Writeup"><span class="iconfont-archer">&#xe606;</span>Writeup</span>
-    
         <span class="sidebar-tag-name" data-tags="WP"><span class="iconfont-archer">&#xe606;</span>WP</span>
+    
+        <span class="sidebar-tag-name" data-tags="Writeup"><span class="iconfont-archer">&#xe606;</span>Writeup</span>
     
         <span class="sidebar-tag-name" data-tags="SSRF"><span class="iconfont-archer">&#xe606;</span>SSRF</span>
     
